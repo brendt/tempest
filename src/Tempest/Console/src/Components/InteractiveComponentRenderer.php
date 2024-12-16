@@ -85,16 +85,17 @@ final class InteractiveComponentRenderer
             usleep(50);
             $key = $console->read(16);
 
-            // If there's no keypress, continue
+            // If there's no keypress, continue.
             if ($key === '') {
                 Fiber::suspend();
 
                 continue;
             }
 
-            if ($component->getState() === ComponentState::BLOCKED) {
-                $this->shouldRerender = true;
+            // Otherwise, we will re-render after processing the key.
+            $this->shouldRerender = true;
 
+            if ($component->getState() === ComponentState::BLOCKED) {
                 continue;
             }
 
@@ -116,8 +117,6 @@ final class InteractiveComponentRenderer
 
                 continue;
             }
-
-            $this->shouldRerender = true;
 
             $return = null;
 

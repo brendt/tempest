@@ -14,7 +14,7 @@ final readonly class DynamicInjection implements Injection
 {
     public function parse(string $content, Highlighter $highlighter): ParsedInjection
     {
-        $pattern = '/(?<match>\<style=\"(?<styles>(?:[a-z-]+\s*)+)\"\>(?:(?!\<style).|\n)*?\<\/style\>)/';
+        $pattern = '/(?<match>\<style=(?<quote>[\"\'])(?<styles>(?:[a-z-]+\s*)+)\k<quote>\>(?:(?!\<style).|\n)*?\<\/style\>)/';
 
         do {
             $content = preg_replace_callback(
@@ -22,6 +22,7 @@ final readonly class DynamicInjection implements Injection
                 pattern: $pattern,
                 callback: function ($matches) use ($highlighter) {
                     $theme = $highlighter->getTheme();
+                    $quote = $matches['quote'];
                     $match = $matches['match'];
                     $styles = $matches['styles'];
                     $before = '';
@@ -34,7 +35,7 @@ final readonly class DynamicInjection implements Injection
                     }
 
                     return str($match)
-                        ->replaceFirst("<style=\"{$styles}\">", $before)
+                        ->replaceFirst("<style={$quote}{$styles}{$quote}>", $before)
                         ->replaceLast('</style>', $after)
                         ->toString();
                 },

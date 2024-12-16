@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Components\Concerns;
 
 use Tempest\Console\Components\ComponentState;
-use Tempest\Console\HandlesKey;
 use Tempest\Console\InteractiveConsoleComponent;
-use Tempest\Console\Key;
 
 /**
  * @mixin InteractiveConsoleComponent
@@ -25,11 +23,5 @@ trait HasState
     public function setState(ComponentState $state): void
     {
         $this->state = $state;
-    }
-
-    #[HandlesKey(Key::ENTER)]
-    public function setSubmitted(): void
-    {
-        $this->state = ComponentState::SUBMITTED;
     }
 }

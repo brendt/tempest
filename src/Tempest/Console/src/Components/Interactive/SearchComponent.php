@@ -160,8 +160,6 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
             return $active->value;
         }
 
-        $this->state = ComponentState::ACTIVE;
-
         return null;
     }
 

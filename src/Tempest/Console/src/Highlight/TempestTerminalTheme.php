@@ -27,11 +27,11 @@ final readonly class TempestTerminalTheme implements TerminalTheme
             TokenTypeEnum::GENERIC => $this->style(TerminalStyle::FG_DARK_CYAN),
             TokenTypeEnum::VALUE => $this->style(TerminalStyle::FG_BLACK),
             TokenTypeEnum::COMMENT => $this->style(TerminalStyle::FG_GRAY),
-            ConsoleTokenType::H1 => $this->style(TerminalStyle::BOLD, TerminalStyle::FG_WHITE, TerminalStyle::BG_DARK_BLUE) . ' ',
-            ConsoleTokenType::H2 => $this->style(TerminalStyle::BOLD, TerminalStyle::BG_BLUE) . ' ',
             ConsoleTokenType::EM => $this->style(TerminalStyle::BOLD, TerminalStyle::UNDERLINE),
             ConsoleTokenType::STRONG => $this->style(TerminalStyle::BOLD),
             ConsoleTokenType::UNDERLINE => $this->style(TerminalStyle::UNDERLINE),
+            ConsoleTokenType::MARK => $this->style(TerminalStyle::FG_YELLOW),
+            ConsoleTokenType::CODE => $this->style(TerminalStyle::DIM) . '`',
             default => TerminalStyle::RESET(),
         };
     }
@@ -43,9 +43,9 @@ final readonly class TempestTerminalTheme implements TerminalTheme
         }
 
         return match ($tokenType) {
-            ConsoleTokenType::H2,
-            ConsoleTokenType::H1 => ' ' . TerminalStyle::RESET(),
             ConsoleTokenType::EM => $this->style(TerminalStyle::RESET_INTENSITY, TerminalStyle::RESET_UNDERLINE),
+            ConsoleTokenType::MARK => $this->style(TerminalStyle::RESET_FOREGROUND),
+            ConsoleTokenType::CODE => '`' . $this->style(TerminalStyle::RESET_INTENSITY),
             default => TerminalStyle::RESET(),
         };
     }

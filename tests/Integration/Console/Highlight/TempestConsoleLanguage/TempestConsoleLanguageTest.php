@@ -6,15 +6,17 @@ namespace Tests\Tempest\Integration\Console\Highlight\LogLanguage;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
-use PHPUnit\Framework\TestCase;
+use Tempest\Console\Highlight\TempestConsoleLanguage\Injections\FileInjection;
 use Tempest\Console\Highlight\TempestConsoleLanguage\TempestConsoleLanguage;
 use Tempest\Console\Highlight\TempestTerminalTheme;
 use Tempest\Highlight\Highlighter;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\root_path;
 
 /**
  * @internal
  */
-final class TempestConsoleLanguageTest extends TestCase
+final class TempestConsoleLanguageTest extends FrameworkIntegrationTestCase
 {
     #[Test]
     #[TestWith(['<style="fg-cyan">foo</style>', "\e[96mfoo\e[39m"])]
@@ -40,6 +42,17 @@ final class TempestConsoleLanguageTest extends TestCase
         $this->assertSame(
             $expected,
             $highlighter->parse($content, new TempestConsoleLanguage()),
+        );
+    }
+
+    public function test_root_path(): void
+    {
+        $highlighter = new Highlighter(new TempestTerminalTheme());
+        $content = sprintf("<file='%s'/>", root_path('composer.json'));
+
+        $this->assertSame(
+            "\e]8;;/Users/enzoinnocenzi/Code/forks/tempest-framework/composer.json\e\composer.json\e]8;;\e\\",
+            (new FileInjection())->parse($content, $highlighter)->content,
         );
     }
 }

@@ -8,17 +8,17 @@ use Tempest\Console\Highlight\ConsoleTokenType;
 use Tempest\Console\Highlight\IsTagInjection;
 use Tempest\Highlight\Injection;
 
-final readonly class H2Injection implements Injection
+final readonly class MarkInjection implements Injection
 {
     use IsTagInjection;
 
     public function getTag(): string
     {
-        return 'h2';
+        return 'mark';
     }
 
     public function getTokenType(): ConsoleTokenType
     {
-        return ConsoleTokenType::H2;
+        return ConsoleTokenType::MARK;
     }
 }

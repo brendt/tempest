@@ -45,7 +45,7 @@ body = """
 """
 
 [git]
-skip_tags = "(0\\.0\\.\\d)|(1\\.0-alpha1)"
+skip_tags = "(0\\.0\\.\\d)|1\\.0\\.0-alpha\\.1"
 commit_parsers = [
   { field = "breaking", pattern = "true", group = "<!-- -1 -->🚨 Breaking changes" },
   { message = "^feat", group = "<!-- 0 -->🚀 Features" },

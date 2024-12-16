@@ -1,0 +1,43 @@
+name: Release JavaScript packages
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Setup Node for npm publishing
+        uses: actions/setup-node@v4
+        with:
+          node-version: current
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Run tests
+        run: bun run test
+
+      - name: Build packages
+        run: bun run build
+
+      - name: Publish packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          for package in packages/*; do
+            if [ -d "$package" ] && [ -f "$package/package.json" ]; then
+              cd "$package"
+              echo "Publishing package in $package"
+              bun publish --access public
+              cd ../..
+            fi
+          done

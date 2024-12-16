@@ -3,6 +3,17 @@
 
 declare(strict_types=1);
 
+/**
+ * This script:
+ * - Prompts for the next version
+ * - Bumps the Kernel version
+ * - Bumps the versions of PHP packages
+ * - Bumps the versions of JavaScript packages
+ * - Updates the changelog
+ * - Commits and push a new tag, which triggers GitHub Actions
+ * - Cleans up release artefacts
+ */
+
 use Composer\Semver\VersionParser;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleApplication;
@@ -13,27 +24,104 @@ use function Tempest\Support\str;
 
 require_once getcwd() . '/vendor/autoload.php';
 
-function ensureAccess(string $remote, string $branch): void
+/**
+ * Bumps the constant version in the Kernel class.
+ */
+function bumpKernelVersion(string $version): void
 {
+    $kernel = __DIR__ . '/../src/Tempest/Core/src/Kernel.php';
+    $content = preg_replace(
+        pattern: '/public const VERSION = \'.*\';/',
+        replacement: "public const VERSION = '{$version}';",
+        subject: file_get_contents($kernel),
+    );
+
+    file_put_contents($kernel, $content);
+}
+
+// TODO: I don't know the exact release process for PHP packages.
+function bumpPhpPackages(string $version, bool $isMajor): void
+{
+    if ($isMajor) {
+        executeCommands([
+            "./vendor/bin/monorepo-builder bump-interdependency {$version}",
+            './vendor/bin/monorepo-builder validate',
+        ]);
+    }
+}
+
+// TODO: I don't know the exact release process for PHP packages.
+function cleanUpAfterRelease(): void
+{
+}
+
+/**
+ * Bumps versions in all `package.json`.
+ */
+function bumpJavaScriptPackages(string $version): void
+{
+    $rootPackageJson = json_decode(file_get_contents(__DIR__ . '/../package.json'), associative: true);
+    $packages = [];
+
+    foreach ($rootPackageJson['workspaces'] as $pattern) {
+        foreach (glob($pattern, GLOB_ONLYDIR) as $dir) {
+            $packageJsonPath = __DIR__ . '/../' . $dir . '/package.json';
+
+            if (file_exists($packageJsonPath)) {
+                $packages[] = realpath($packageJsonPath);
+            }
+        }
+    }
+
+    foreach ($packages as $package) {
+        updateJsonFile(
+            path: $package,
+            callback: function (array $content) use ($version) {
+                $content['version'] = $version;
+
+                return $content;
+            },
+        );
+    }
+}
+
+/**
+ * Updates the `CHANGELOG.md` file.
+ */
+function updateChangelog(): void
+{
+    executeCommands('bunx git-cliff > CHANGELOG.md');
+}
+
+/**
+ * Ensure the release script can run.
+ */
+function performPreReleaseChecks(string $remote, string $branch): void
+{
+    if (empty(shell_exec('which bun'))) {
+        throw new Exception('This script requires `bun` to be installed.');
+    }
+
     if (! empty(shell_exec('git status --porcelain 2>&1'))) {
         throw new Exception('Repository must be in a clean state to release.');
     }
 
-    if (! str_starts_with(shell_exec('git rev-parse --abbrev-ref --symbolic-full-name @{u}'), "$remote/$branch")) {
-        throw new Exception("You must be on the $remote/$branch branch to release.");
+    if (! str_starts_with(shell_exec('git rev-parse --abbrev-ref --symbolic-full-name @{u}'), "{$remote}/{$branch}")) {
+        throw new Exception("You must be on the {$remote}/{$branch} branch to release.");
     }
 }
 
+/**
+ * Gets the current version.
+ */
 function getCurrentVersion(): string
 {
     return exec('git describe --tags --abbrev=0');
 }
 
-function normalizeVersion(string $version): string
-{
-    return preg_replace('/^(\d+\.\d+\.\d+)\.0(-|$|\+)/', '$1$2', (new VersionParser())->normalize($version));
-}
-
+/**
+ * Suggests a semver-valid version.
+ */
 function suggestNextVersions(string $current): array
 {
     $version = normalizeVersion($current);
@@ -69,12 +157,17 @@ function suggestNextVersions(string $current): array
     ]);
 }
 
-function releaseTag(string $tag): void
+function normalizeVersion(string $version): string
 {
-    $commands = [
-        "git tag {$tag}",
-        "git push origin tag {$tag}",
-    ];
+    return preg_replace('/^(\d+\.\d+\.\d+)\.0(-|$|\+)/', '$1$2', (new VersionParser())->normalize($version));
+}
+
+/**
+ * Executes the given shell commands.
+ */
+function executeCommands(string|array $commands): void
+{
+    $commands = is_array($commands) ? $commands : [$commands];
 
     foreach ($commands as $command) {
         exec($command, result_code: $code);
@@ -83,7 +176,44 @@ function releaseTag(string $tag): void
             continue;
         }
 
-        throw new Exception("Pushing of git tag failed.");
+        throw new Exception("Command failed: {$command}");
+    }
+}
+
+/**
+ * Creates a commit with the current changes.
+ */
+function commit(string $message): void
+{
+    executeCommands("git commit -am '{$message}'");
+}
+
+/**
+ * Updates a JSON file, preserving indentation.
+ */
+function updateJsonFile(string $path, Closure $callback): void
+{
+    $content = file_get_contents($path);
+    $indent = detectIndent($content);
+    $content = $callback(json_decode($content, associative: true), $indent);
+    $content = preg_replace_callback(
+        '/^ +/m',
+        fn ($m) => str_repeat($indent, \strlen($m[0]) / 4),
+        json_encode($content, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES),
+    );
+
+    file_put_contents($path, $content . "\n");
+}
+
+/**
+ * Detects the indentation of a raw JSON file.
+ */
+function detectIndent(string $raw, string $default = '    '): string
+{
+    try {
+        return explode('"', explode("\n", $raw)[1])[0] ?? $default;
+    } catch (Throwable) {
+        return $default;
     }
 }
 
@@ -101,36 +231,58 @@ try {
     $console = get(Console::class);
 
     $console->writeln();
-    $console->info(sprintf("Current version is <u><strong>%s</strong></u>", $current = getCurrentVersion()));
+    $console->info(sprintf('Current version is <em>%s</em>.', $current = getCurrentVersion()));
 
-    $console->writeln();
     $new = $console->ask(
-        question: "What should the new version be?",
+        question: 'What should the new version be?',
         options: arr(suggestNextVersions($current))
             ->map(fn (string $version, string $type) => (string) str($type)->replace('_', ' ')->append(': ', $version))
             ->values()
             ->toArray(),
     );
 
-    $tag = (string) str($new)->afterLast(': ')->prepend('v');
+    $isMajor = str_contains($new, 'major');
+    $version = (string) str($new)->afterLast(': ');
+    $tag = "v{$version}";
 
-    $console->writeln();
-    if (! $console->confirm("The next tag will be <u><strong>{$tag}</strong></u><question>. Release?")) {
+    if (! $console->confirm("The next tag will be <em>{$tag}</em>. Release?")) {
         $console->error('Cancelled.');
         exit;
     }
 
-    $console->writeln();
-    $console->writeln();
-    $console->writeln();
+    // TODO: use `$console->task` here
+
+    // Bump PHP packages
+    $console->info('Bumping PHP packages...');
+    bumpKernelVersion($version);
+    bumpPhpPackages($version, $isMajor);
+
+    // Bump JavaScript packages
+    $console->info('Bumping JavaScript packages...');
+    bumpJavaScriptPackages($version);
+
+    // Update changelog
+    updateChangelog();
+
+    // Push tags
     $console->info('Releasing...');
+    // commit("chore: release {$tag}");
+    // executeCommands([
+    //     "git tag {$tag}",
+    //     "git push origin tag {$tag}",
+    // ]);
 
-    releaseTag($tag);
+    // Clean up
+    $console->info('Cleaning up...');
+    cleanUpAfterRelease();
+    // commit('chore: post-release clean up');
 
     $console->writeln();
-    $console->success("Released {$tag}");
+    $console->success(sprintf(
+        'Released <em>%1$s</em>. The <href="https://github.com/tempestphp/tempest-framework/releases/tag/%1$s">GitHub release</href> will be created automatically in a few seconds.',
+        $tag,
+    ));
 
     exit;
-
 } catch (InterruptException) {
 }

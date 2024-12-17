@@ -689,6 +689,34 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
+     * Truncates the instance to the specified amount of characters from the start.
+     *
+     * ### Example
+     * ```php
+     * str('Lorem ipsum')->truncateStart(5, start: '...'); // ...ipsum
+     * ```
+     */
+    public function truncateStart(int $characters, string $start = ''): self
+    {
+        return $this->reverse()
+            ->truncate($characters, $start)
+            ->reverse();
+    }
+
+    /**
+     * Reverses the instance.
+     *
+     * ### Example
+     * ```php
+     * str('Lorem ipsum')->reverse(); // muspi meroL
+     * ```
+     */
+    public function reverse(): self
+    {
+        return new self(implode('', array_reverse(mb_str_split($this->string, length: 1))));
+    }
+
+    /**
      * Gets parts of the instance.
      *
      * ### Example

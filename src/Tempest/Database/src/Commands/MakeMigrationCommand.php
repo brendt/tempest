@@ -18,6 +18,8 @@ use Tempest\Database\Stubs\MigrationModelStub;
 use Tempest\Validation\Rules\EndsWith;
 use Tempest\Validation\Rules\NotEmpty;
 
+use function Tempest\get;
+
 final class MakeMigrationCommand
 {
     use PublishesFiles;
@@ -42,7 +44,7 @@ final class MakeMigrationCommand
             $stubFile = $this->getStubFileFromMigrationType($migrationType);
             $targetPath = match ($migrationType) {
                 MigrationType::RAW => $this->generateRawFile( $fileName, $stubFile ),
-                default => $this->generateClassFile( $fileName, $stubFile ),
+                default => $this->generateClassFile( $fileName, $stubFile, $migrationType ),
             };
 
             $this->success(sprintf('Migration file successfully created at "%s".', $targetPath));
@@ -94,26 +96,41 @@ final class MakeMigrationCommand
      * 
      * @param string $fileName The name of the file.
      * @param StubFile $stubFile The stub file to use.
+     * @param MigrationType $migrationType The type of the migration.
      * 
      * @return string The path to the generated file.
      */
     protected function generateClassFile(
         string $fileName,
         StubFile $stubFile,
+        MigrationType $migrationType,
     ): string {
         $suggestedPath = $this->getSuggestedPath($fileName);
         $targetPath = $this->promptTargetPath($suggestedPath);
         $shouldOverride = $this->askForOverride($targetPath);
-
         $tableName = str($fileName)->snake()->toString();
+
+        $replacements = [
+            'dummy-date' => date('Y-m-d'),
+            'dummy-table-name' => $tableName,
+        ];
+        if ( $migrationType === MigrationType::MODEL ) {
+            $migrationModel = $this->search('Model related to the migration', function( string $search ) {
+                // @TODO : Implement the search logic to find all models in app
+                return [
+                    'BookModel',
+                    'AuthorModel',
+                ];
+            });
+
+            $replacements['DummyModel'] = $migrationModel;
+        }
+        
         $this->stubFileGenerator->generateClassFile(
             stubFile: $stubFile,
             targetPath: $targetPath,
             shouldOverride: $shouldOverride,
-            replacements: [
-                'dummy-date' => date('Y-m-d'),
-                'dummy-table-name' => $tableName,
-            ],
+            replacements: $replacements,
         );
 
         return $targetPath;

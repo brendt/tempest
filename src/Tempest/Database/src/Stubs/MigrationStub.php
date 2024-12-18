@@ -10,7 +10,7 @@ use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 
-final readonly class MigrationStub implements DatabaseMigration
+final class MigrationStub implements DatabaseMigration
 {
     public string $name {
         get => 'dummy-date_dummy-table-name';

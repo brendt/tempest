@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Stubs;
 
-use Tempest\Database\Migrations\Migration;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 
-final class MigrationModelStub
+final class MigrationModelStub implements DatabaseMigration
 {
-    public function getName(): string {
-        return 'dummy-date_dummy-name';
+    public string $name {
+        get => 'dummy-date_dummy-table-name';
     }
 
     public function up(): ?QueryStatement {

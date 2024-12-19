@@ -4,21 +4,32 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Commands;
 
+use function Tempest\get;
+use function Tempest\Support\arr;
+
+use Throwable;
+use Tempest\Validation\Rules\NotEmpty;
+use Tempest\Validation\Rules\EndsWith;
+use Tempest\Reflection\ClassReflector;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Enums\StubFileType;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Database\Stubs\MigrationStub;
+use Tempest\Database\Stubs\MigrationModelStub;
 use Tempest\Database\Enums\MigrationType;
+use Tempest\Database\DatabaseModel;
 use Tempest\Core\PublishesFiles;
+
+use Tempest\Core\DoNotDiscover;
+use Tempest\Core\Composer;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleArgument;
+use SplFileInfo;
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
 use InvalidArgumentException;
-use Tempest\Database\Stubs\MigrationModelStub;
-use Tempest\Validation\Rules\EndsWith;
-use Tempest\Validation\Rules\NotEmpty;
-
-use function Tempest\get;
+use FilesystemIterator;
 
 final class MakeMigrationCommand
 {
@@ -109,21 +120,17 @@ final class MakeMigrationCommand
         $targetPath = $this->promptTargetPath($suggestedPath);
         $shouldOverride = $this->askForOverride($targetPath);
         $tableName = str($fileName)->snake()->toString();
-
         $replacements = [
             'dummy-date' => date('Y-m-d'),
             'dummy-table-name' => $tableName,
         ];
-        if ( $migrationType === MigrationType::MODEL ) {
-            $migrationModel = $this->search('Model related to the migration', function( string $search ) {
-                // @TODO : Implement the search logic to find all models in app
-                return [
-                    'BookModel',
-                    'AuthorModel',
-                ];
-            });
 
-            $replacements['DummyModel'] = $migrationModel;
+        if ( $migrationType === MigrationType::MODEL ) {
+            $appModels = $this->getAppDatabaseModels();
+            $migrationModel = $this->ask('Model related to the migration', array_keys($appModels));
+            $migrationModel = $appModels[$migrationModel] ?? null;
+
+            $replacements["'DummyModel'"] = sprintf('%s::class', $migrationModel?->getName());
         }
         
         $this->stubFileGenerator->generateClassFile(
@@ -148,5 +155,69 @@ final class MakeMigrationCommand
         } catch (InvalidArgumentException $invalidArgumentException) {
             throw new FileGenerationFailedException(sprintf('Cannot retrieve stub file: %s', $invalidArgumentException->getMessage()));
         }
+    }
+
+    /**
+     * Get database models defined in the application.
+     * 
+     * @return array<string,ClassReflector> The list of models.
+     */
+    protected function getAppDatabaseModels(): array
+    {
+        $composer = get(Composer::class);
+        $directories = new RecursiveDirectoryIterator( $composer->mainNamespace->path, flags: FilesystemIterator::UNIX_PATHS | FilesystemIterator::SKIP_DOTS );
+        $files = new RecursiveIteratorIterator($directories);
+        $databaseModels = [];
+        
+        foreach ($files as $file) {
+            // We assume that any PHP file that starts with an uppercase letter will be a class
+            if ( $file->getExtension() !== 'php' || ucfirst( $file->getFilename() ) !== $file->getFilename() ) {
+                continue;
+            }
+
+            // Try to create a PSR-compliant class name from the path
+            $fqcn = str_replace(
+                [
+                    rtrim($composer->mainNamespace->path, '\\/'),
+                    '/',
+                    '\\\\',
+                    '.php',
+                ],
+                [
+                    $composer->mainNamespace->namespace,
+                    '\\',
+                    '\\',
+                    '',
+                ],
+                $file->getPathname(),
+            );
+
+            // Bail if not a class
+            if ( ! class_exists( $fqcn ) ) {
+                continue;
+            }
+
+            try {
+                $class = new ClassReflector($fqcn);
+            } catch (Throwable) {
+                continue;
+            }
+
+            // Bail if not a database model
+            if ( ! $class->implements(DatabaseModel::class) ) {
+                continue;
+            }
+
+            // Bail if the class should not be discovered
+            if ( $class->hasAttribute(DoNotDiscover::class) ) {
+                continue;
+            }
+
+            $databaseModels[] = $class;
+        }
+
+        return arr($databaseModels)
+            ->mapWithKeys(fn( ClassReflector $model ) => yield $model->getName() => $model)
+            ->toArray();
     }
 }

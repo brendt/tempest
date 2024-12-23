@@ -131,7 +131,7 @@ final class OptionCollection implements Iterator, Countable
     {
         $option = $this->getActive();
 
-        if (! $option) {
+        if ($option === null) {
             return $default;
         }
 

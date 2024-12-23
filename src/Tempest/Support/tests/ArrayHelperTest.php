@@ -569,6 +569,30 @@ final class ArrayHelperTest extends TestCase
         $this->assertSame($expected, $current);
     }
 
+    public function test_unique_callback(): void
+    {
+        $collection = arr([
+            'John',
+            'Doe',
+            'John',
+            'Doe',
+            'Jane',
+            'Doe',
+        ]);
+
+        $current = $collection
+            ->unique(fn (string $item) => $item[0])
+            ->values()
+            ->toArray();
+
+        $expected = [
+            'John',
+            'Doe',
+        ];
+
+        $this->assertSame($expected, $current);
+    }
+
     public function test_unique_with_associative_array(): void
     {
         $collection = arr([

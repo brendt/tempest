@@ -16,7 +16,7 @@ final class MigrationStub implements DatabaseMigration
         get => 'dummy-date_dummy-table-name';
     }
 
-    public function up(): ?QueryStatement {
+    public function up(): QueryStatement {
         return new CreateTableStatement(
             tableName: 'dummy-table-name'
         )
@@ -26,7 +26,7 @@ final class MigrationStub implements DatabaseMigration
             ->datetime('updated_at');
     }
 
-    public function down(): ?QueryStatement {
+    public function down(): QueryStatement {
         return new DropTableStatement(
             tableName: 'dummy-table-name'
         );

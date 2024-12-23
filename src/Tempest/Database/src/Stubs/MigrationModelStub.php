@@ -15,15 +15,15 @@ final class MigrationModelStub implements DatabaseMigration
         get => 'dummy-date_dummy-table-name';
     }
 
-    public function up(): ?QueryStatement {
-        return CreateTableStatement::forModel('DummyModel')
+    public function up(): QueryStatement {
+        return CreateTableStatement::forModel('DummyModel') // @phpstan-ignore-line argument.type (Because this is stub file and this param will be replaced by actual model name)
             ->primary()
             ->text('name')
             ->datetime('created_at')
             ->datetime('updated_at');
     }
 
-    public function down(): ?QueryStatement {
-        return DropTableStatement::forModel('DummyModel');
+    public function down(): QueryStatement {
+        return DropTableStatement::forModel('DummyModel'); // @phpstan-ignore-line argument.type (Because this is stub file and this param will be replaced by actual model name)
     }
 }

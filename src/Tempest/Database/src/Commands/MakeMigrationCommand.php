@@ -72,7 +72,7 @@ final class MakeMigrationCommand
      * 
      * @return string The path to the generated file.
      */
-    protected function generateRawFile(
+    private function generateRawFile(
         string $fileName,
         StubFile $stubFile,
     ): string {
@@ -112,7 +112,7 @@ final class MakeMigrationCommand
      * 
      * @return string The path to the generated file.
      */
-    protected function generateClassFile(
+    private function generateClassFile(
         string $fileName,
         StubFile $stubFile,
         MigrationType $migrationType,
@@ -164,7 +164,7 @@ final class MakeMigrationCommand
      * 
      * @return array<string,ClassReflector> The list of models.
      */
-    protected function getAppDatabaseModels(): array
+    private function getAppDatabaseModels(): array
     {
         $composer = get(Composer::class);
         $directories = new RecursiveDirectoryIterator( $composer->mainNamespace->path, flags: FilesystemIterator::UNIX_PATHS | FilesystemIterator::SKIP_DOTS );
@@ -173,10 +173,12 @@ final class MakeMigrationCommand
         
         foreach ($files as $file) {
             // We assume that any PHP file that starts with an uppercase letter will be a class
-            if ( $file->getExtension() !== 'php' || ucfirst( $file->getFilename() ) !== $file->getFilename() ) {
+            if ($file->getExtension() !== 'php') {
                 continue;
             }
-
+            if (ucfirst( $file->getFilename() ) !== $file->getFilename()) {
+                continue;
+            }
             // Try to create a PSR-compliant class name from the path
             $fqcn = str_replace(
                 [

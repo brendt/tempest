@@ -25,7 +25,7 @@ final readonly class StaticSingleChoiceComponent implements StaticConsoleCompone
             return $this->default;
         }
 
-        $console->write("<h2>{$this->label}</h2> ");
+        $console->write("<style='bold fg-blue'>{$this->label}</style> ");
 
         $parsedOptions = [];
 

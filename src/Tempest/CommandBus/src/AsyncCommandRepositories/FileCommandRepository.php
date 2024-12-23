@@ -39,6 +39,10 @@ final readonly class FileCommandRepository implements CommandRepository
 
     public function markAsFailed(string $uuid): void
     {
+        if (! is_file(__DIR__ . "/../stored-commands/{$uuid}.pending.txt")) {
+            return;
+        }
+
         rename(
             from: __DIR__ . "/../stored-commands/{$uuid}.pending.txt",
             to: __DIR__ . "/../stored-commands/{$uuid}.failed.txt",
@@ -50,7 +54,6 @@ final readonly class FileCommandRepository implements CommandRepository
         return arr(glob(__DIR__ . '/../stored-commands/*.pending.txt'))
             ->mapWithKeys(function (string $path) {
                 $uuid = str_replace('.pending.txt', '', pathinfo($path, PATHINFO_BASENAME));
-
                 $payload = file_get_contents($path);
 
                 yield $uuid => unserialize($payload);

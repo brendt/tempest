@@ -8,8 +8,6 @@ use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Core\PublishesFiles;
 use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Generation\Exceptions\FileGenerationAbortedException;
-use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Router\Stubs\ControllerStub;
 
 final class MakeControllerCommand
@@ -33,20 +31,16 @@ final class MakeControllerCommand
         $targetPath = $this->promptTargetPath($suggestedPath);
         $shouldOverride = $this->askForOverride($targetPath);
 
-        try {
-            $this->stubFileGenerator->generateClassFile(
-                stubFile: StubFile::from(ControllerStub::class),
-                targetPath: $targetPath,
-                shouldOverride: $shouldOverride,
-                replacements: [
-                    'dummy-path' => $controllerPath,
-                    'dummy-view' => $controllerView,
-                ],
-            );
+        $this->stubFileGenerator->generateClassFile(
+            stubFile: StubFile::from(ControllerStub::class),
+            targetPath: $targetPath,
+            shouldOverride: $shouldOverride,
+            replacements: [
+                'dummy-path' => $controllerPath,
+                'dummy-view' => $controllerView,
+            ],
+        );
 
-            $this->success(sprintf('File successfully created at <em>%s</em>.', $targetPath));
-        } catch (FileGenerationAbortedException|FileGenerationFailedException $e) {
-            $this->error($e->getMessage());
-        }
+        $this->console->success(sprintf('File successfully created at <em>%s</em>.', $targetPath));
     }
 }

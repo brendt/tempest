@@ -87,7 +87,7 @@ final class TextInputComponentTest extends FrameworkIntegrationTestCase
             $component->input('6');
 
             $this->assertStringNotContainsString('1', $component->render($terminal));
-            $this->assertStringContainsString('2', $component->render($terminal));
+            $this->assertStringNotContainsString('2', $component->render($terminal));
             $this->assertStringContainsString('3', $component->render($terminal));
             $this->assertStringContainsString('4', $component->render($terminal));
             $this->assertStringContainsString('5', $component->render($terminal));

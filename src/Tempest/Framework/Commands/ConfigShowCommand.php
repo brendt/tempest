@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Framework\Commands;
 
+use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ExitCode;
 use Tempest\Console\HasConsole;
-use Tempest\Console\Terminal\Terminal;
 use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Highlight\Languages\Json\JsonLanguage;
 use Tempest\Highlight\Languages\Php\PhpLanguage;
@@ -31,16 +31,19 @@ final readonly class ConfigShowCommand
     ) {
     }
 
-    #[ConsoleCommand(name: 'config:show', description: 'Show resolved configuration', aliases: ['config'])]
+    #[ConsoleCommand(name: 'config:show', description: 'Shows resolved configuration files', aliases: ['config'])]
     public function __invoke(
+        #[ConsoleArgument(description: 'Specifies the format in which the configuration should be printed.')]
         ConfigShowFormat $format = ConfigShowFormat::PRETTY,
+        #[ConsoleArgument(description: 'Searches configuration files interactively.')]
         ?bool $search = false,
+        #[ConsoleArgument(description: 'Filters the configuration files by the given string.')]
         ?string $filter = null,
     ): ExitCode {
         $configs = $this->resolveConfig($filter, $search);
 
         if (empty($configs)) {
-            $this->console->error('No configuration found');
+            $this->console->error('No configuration found.');
 
             return ExitCode::ERROR;
         }
@@ -117,11 +120,7 @@ final readonly class ConfigShowCommand
             default: $data[0],
         );
 
-        // TODO: This is a workaround for SearchComponent not clearing the terminal properly
-        $terminal = new Terminal($this->console);
-        $terminal->switchToInteractiveMode();
-
-        $terminal->cursor->clearAfter();
+        $this->console->writeln();
 
         return $return;
     }

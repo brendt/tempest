@@ -48,6 +48,8 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
             $this->console->error('<style="bold">Caution</style>: discovery cache is enabled');
         }
 
+        $this->console->writeln();
+
         /** @var \Tempest\Console\ConsoleCommand[][] $commands */
         $commands = [];
 
@@ -73,9 +75,9 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
         ) + 4;
 
         foreach ($commands as $group => $commandsForGroup) {
-            $title = str(ucfirst($group))
-                ->alignRight($longestCommandName, padding: 4)
-                ->replaceRegex('/^( *)(.*?)( *)$/', '$1<h2>$2</h2>$3')
+            $title = str(mb_strtoupper($group))
+                ->alignRight($longestCommandName, padding: 5)
+                ->replaceRegex('/^( *)(.*?)( *)$/', "$1<style='dim fg-blue'>//</style> <style='bold fg-blue'>$2</style>$3")
                 ->toString();
 
             $this->console

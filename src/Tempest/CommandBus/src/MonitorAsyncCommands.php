@@ -23,23 +23,28 @@ final readonly class MonitorAsyncCommands
     ) {
     }
 
-    #[ConsoleCommand(name: 'command:monitor')]
+    #[ConsoleCommand(name: 'command:monitor', description: 'Monitors and executes pending async commands')]
     public function __invoke(): void
     {
-        $this->success('Monitoring for new commands. Press ctrl+c to stop.');
+        $this->info('Monitoring for new commands. Press <em>Ctrl+C</em> to stop.');
+        $this->writeln();
 
         /** @var \Symfony\Component\Process\Process[] $processes */
         $processes = [];
 
         while (true) { // @phpstan-ignore-line
             foreach ($processes as $uuid => $process) {
-                $time = new DateTimeImmutable();
-
                 if ($process->isTerminated()) {
                     if ($process->isSuccessful()) {
-                        $this->writeln("<style=\"fg-green\">{$uuid}</style> finished at {$time->format('Y-m-d H:i:s')}");
+                        $this->console->keyValue(
+                            key: "<style='fg-gray'>{$uuid}</style>",
+                            value: "<style='fg-green bold'>SUCCESS</style>",
+                        );
                     } else {
-                        $this->writeln("<style=\"fg-red\">{$uuid}</style> failed at {$time->format('Y-m-d H:i:s')}");
+                        $this->console->keyValue(
+                            key: "<style='fg-gray'>{$uuid}</style>",
+                            value: "<style='fg-red bold'>FAILED</style>",
+                        );
                     }
 
                     if ($output = trim($process->getOutput())) {
@@ -72,8 +77,12 @@ final readonly class MonitorAsyncCommands
             // Start a task
             $uuid = $availableCommands->keys()->first();
 
+            // TODO: remove logging in favor of "task" in HandleAsyncCommand
             $time = new DateTimeImmutable();
-            $this->writeln("<h2>{$uuid}</h2> started at {$time->format('Y-m-d H:i:s')}");
+            $this->console->keyValue(
+                key: $uuid,
+                value: "<style='fg-gray'>{$time->format('Y-m-d H:i:s')}</style>",
+            );
 
             $process = new Process([
                 $this->argumentBag->getBinaryPath(),

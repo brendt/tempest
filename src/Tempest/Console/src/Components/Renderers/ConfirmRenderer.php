@@ -27,17 +27,24 @@ final class ConfirmRenderer
     ): string {
         $this->prepareRender($terminal, $state);
         $this->label($label);
-        $this->newLine(border: true);
+        // $this->newLine(border: true);
 
         match ($this->state) {
-            ComponentState::SUBMITTED => $this->line(
-                $this->style($answer === true ? 'bg-green bold' : 'bg-red bold', $this->centerText($answer ? $this->yes : $this->no, width: 9)),
-                "\n",
-            ),
+            ComponentState::CANCELLED => $this->line($this->style('italic dim', 'Cancelled.'))->newLine(),
+            ComponentState::DONE => $this->line(match ($answer) {
+                true => $this->style('fg-green', '✓ ') . $this->style('dim', $this->yes),
+                false => $this->style('fg-red', '× ') . $this->style('dim', $this->no),
+            }, "\n"),
             default => $this->line(
-                $this->style($answer === true ? 'bg-green bold' : 'bg-gray dim', $this->centerText($this->yes, width: 9)),
-                ' ',
-                $this->style($answer === false ? 'bg-red bold' : 'bg-gray dim', $this->centerText($this->no, width: 9)),
+                $this->style(
+                    $answer === true ? 'fg-green bold' : 'fg-gray dim',
+                    '<style="dim">→</style> ' . $this->yes,
+                ),
+                '   ',
+                $this->style(
+                    $answer === false ? 'fg-red bold' : 'fg-gray dim',
+                    '<style="dim">→</style> ' . $this->no,
+                ),
                 "\n",
             ),
         };

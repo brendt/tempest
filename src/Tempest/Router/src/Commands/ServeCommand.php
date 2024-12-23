@@ -10,7 +10,7 @@ final readonly class ServeCommand
 {
     #[ConsoleCommand(
         name: 'serve',
-        description: 'Start a PHP development server',
+        description: 'Starts a PHP development server',
     )]
     public function __invoke(string $host = 'localhost', int $port = 8000, string $publicDir = 'public/'): void
     {

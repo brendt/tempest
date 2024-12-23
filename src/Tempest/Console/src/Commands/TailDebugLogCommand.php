@@ -27,10 +27,8 @@ final readonly class TailDebugLogCommand
     {
         $debugLogPath = $this->logConfig->debugLogPath;
 
-        $this->console->write('<h1>Debug</h1> ');
-
         if (! $debugLogPath) {
-            $this->console->error('No debug log configured in LogConfig');
+            $this->console->error('No debug log configured in <code>LogConfig</code>.');
 
             return;
         }
@@ -45,7 +43,7 @@ final readonly class TailDebugLogCommand
             touch($debugLogPath);
         }
 
-        $this->console->writeln("Listening at {$debugLogPath}");
+        $this->console->header('Tailing debug logs', "Reading <file='{$debugLogPath}'/>…");
 
         new TailReader()->tail(
             path: $debugLogPath,

@@ -9,8 +9,6 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Core\PublishesFiles;
 use Tempest\Database\Stubs\DatabaseModelStub;
 use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Generation\Exceptions\FileGenerationAbortedException;
-use Tempest\Generation\Exceptions\FileGenerationFailedException;
 
 final class MakeModelCommand
 {
@@ -29,16 +27,12 @@ final class MakeModelCommand
         $targetPath = $this->promptTargetPath($suggestedPath);
         $shouldOverride = $this->askForOverride($targetPath);
 
-        try {
-            $this->stubFileGenerator->generateClassFile(
-                stubFile: StubFile::from(DatabaseModelStub::class),
-                targetPath: $targetPath,
-                shouldOverride: $shouldOverride,
-            );
+        $this->stubFileGenerator->generateClassFile(
+            stubFile: StubFile::from(DatabaseModelStub::class),
+            targetPath: $targetPath,
+            shouldOverride: $shouldOverride,
+        );
 
-            $this->console->success(sprintf('File successfully created at <em>%s</em>.', $targetPath));
-        } catch (FileGenerationAbortedException|FileGenerationFailedException $e) {
-            $this->console->error($e->getMessage());
-        }
+        $this->console->success(sprintf('File successfully created at <em>%s</em>.', $targetPath));
     }
 }

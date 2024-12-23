@@ -23,24 +23,25 @@ final readonly class CacheStatusCommand
     #[ConsoleCommand(name: 'cache:status', description: 'Shows which caches are enabled')]
     public function __invoke(): void
     {
-        $caches = $this->cacheConfig->caches;
+        $this->console->header('Cache status');
+        $this->console->keyValue('Total caches', (string) count($this->cacheConfig->caches));
+        $this->console->keyValue('Global cache', match ($this->cacheConfig->enable) {
+            true => '<style="bold fg-green">ENABLED</style>',
+            false => '<style="bold fg-red">FORCEFULLY DISABLED</style>',
+            default => '<style="bold fg-gray">DISABLED</style>',
+        });
 
-        foreach ($caches as $cacheClass) {
+        foreach ($this->cacheConfig->caches as $cacheClass) {
             /** @var Cache $cache */
             $cache = $this->container->get($cacheClass);
 
-            $reason = match ($this->cacheConfig->enable) {
-                true => ' (global CACHE = true)',
-                false => ' (global CACHE = false)',
-                null => '',
-            };
-
-            $this->writeln(sprintf(
-                '<em>%s</em> %s%s',
-                $cacheClass,
-                $cache->isEnabled() ? '<style="fg-green">enabled</style>' : '<style="fg-red">disabled</style>',
-                $reason,
-            ));
+            $this->console->keyValue(
+                key: $cacheClass,
+                value: match ($cache->isEnabled()) {
+                    true => '<style="bold fg-green">ENABLED</style>',
+                    false => '<style="bold fg-red">DISABLED</style>',
+                },
+            );
         }
     }
 }

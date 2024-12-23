@@ -31,13 +31,23 @@ final readonly class CacheClearCommand
             );
         }
 
+        if (count($caches) === 0) {
+            $this->console->info('No cache selected.');
+
+            return;
+        }
+
+        $this->console->header('Clearing caches');
+
         foreach ($caches as $cacheClass) {
             /** @var Cache $cache */
             $cache = $this->container->get($cacheClass);
-
             $cache->clear();
 
-            $this->info("<em>{$cacheClass}</em> cleared successfully.");
+            $this->console->keyValue(
+                key: $cacheClass,
+                value: "<style='bold fg-green'>CLEARED</style>",
+            );
         }
     }
 }

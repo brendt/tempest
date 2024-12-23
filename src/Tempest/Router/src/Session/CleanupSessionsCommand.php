@@ -8,7 +8,7 @@ use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Schedule;
 use Tempest\Console\Scheduler\Every;
-use Tempest\EventBus\EventHandler;
+use function Tempest\listen;
 
 final readonly class CleanupSessionsCommand
 {
@@ -25,16 +25,12 @@ final readonly class CleanupSessionsCommand
     #[Schedule(Every::MINUTE)]
     public function __invoke(): void
     {
-        $this->console->info('Cleaning up sessions...');
+        // TODO: as task
+
+        listen(SessionDestroyed::class, function (SessionDestroyed $event) {
+            $this->console->keyValue((string) $event->id, "<style='bold fg-green'>DESTROYED</style>");
+        });
 
         $this->sessionManager->cleanup();
-
-        $this->console->success('Done');
-    }
-
-    #[EventHandler]
-    public function onSessionDestroyed(SessionDestroyed $event): void
-    {
-        $this->console->info("\t- {$event->id} removed");
     }
 }

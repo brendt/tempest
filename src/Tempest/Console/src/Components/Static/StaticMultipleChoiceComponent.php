@@ -43,7 +43,7 @@ final readonly class StaticMultipleChoiceComponent implements StaticConsoleCompo
 
     private function askQuestion(Console $console): array
     {
-        $console->writeln("<h2>{$this->label}</h2> ");
+        $console->writeln("<style='bold fg-blue'>{$this->label}</style> ");
         $console->write('<style="fg-gray">Select multiple items using comas</style>');
 
         $parsedOptions = [];

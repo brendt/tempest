@@ -8,8 +8,6 @@ use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Core\PublishesFiles;
 use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Generation\Exceptions\FileGenerationAbortedException;
-use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Router\Stubs\ResponseStub;
 
 final class MakeResponseCommand
@@ -31,16 +29,12 @@ final class MakeResponseCommand
         $targetPath = $this->promptTargetPath($suggestedPath);
         $shouldOverride = $this->askForOverride($targetPath);
 
-        try {
-            $this->stubFileGenerator->generateClassFile(
-                stubFile: StubFile::from(ResponseStub::class),
-                targetPath: $targetPath,
-                shouldOverride: $shouldOverride,
-            );
+        $this->stubFileGenerator->generateClassFile(
+            stubFile: StubFile::from(ResponseStub::class),
+            targetPath: $targetPath,
+            shouldOverride: $shouldOverride,
+        );
 
-            $this->success(sprintf('Response successfully created at "%s".', $targetPath));
-        } catch (FileGenerationAbortedException|FileGenerationFailedException $e) {
-            $this->error($e->getMessage());
-        }
+        $this->console->success(sprintf('Response successfully created at "%s".', $targetPath));
     }
 }

@@ -18,6 +18,8 @@ use Tempest\Console\Components\Interactive\SingleChoiceComponent;
 use Tempest\Console\Components\Interactive\TaskComponent;
 use Tempest\Console\Components\Interactive\TextInputComponent;
 use Tempest\Console\Components\InteractiveComponentRenderer;
+use Tempest\Console\Components\Renderers\KeyValueRenderer;
+use Tempest\Console\Components\Renderers\MessageRenderer;
 use Tempest\Console\Exceptions\UnsupportedComponent;
 use Tempest\Console\Highlight\TempestConsoleLanguage\TempestConsoleLanguage;
 use Tempest\Console\Input\ConsoleArgumentBag;
@@ -104,7 +106,7 @@ final class GenericConsole implements Console
     public function header(string $header, ?string $subheader = null): static
     {
         $this->writeln();
-        $this->writeln("<h1>{$header}</h1>");
+        $this->writeln("<style='dim fg-blue'>//</style> <style='bold fg-blue'>".mb_strtoupper($header).'</style>');
 
         if ($subheader) {
             $this->writeln($subheader);
@@ -123,7 +125,7 @@ final class GenericConsole implements Console
     public function writeWithLanguage(string $contents, Language $language): self
     {
         if ($this->label) {
-            $contents = "<h2>{$this->label}</h2> {$contents}";
+            $contents = "<style='dim fg-blue'>//</style> <style='bold fg-blue'>" . $this->label . "\n{$contents}";
         }
 
         $this->output->write($this->highlighter->parse($contents, $language));
@@ -138,38 +140,30 @@ final class GenericConsole implements Console
         return $this;
     }
 
-    public function info(string $line, ?string $symbol = null): self
+    public function info(string $contents, ?string $title = null): self
     {
-        $symbol ??= 'ℹ';
-
-        $this->writeln("<style=\"bg-dark-blue fg-white\"> {$symbol} </style> <style=\"fg-blue\">{$line}</style>");
+        $this->writeln((new MessageRenderer('𝓲', 'blue'))->render($contents));
 
         return $this;
     }
 
-    public function error(string $line, ?string $symbol = null): self
+    public function error(string $contents, ?string $title = null): self
     {
-        $symbol ??= '×';
-
-        $this->writeln("<style=\"bg-dark-red fg-white\"> {$symbol} </style> <style=\"fg-red\">{$line}</style>");
+        $this->writeln((new MessageRenderer('×', 'red'))->render($contents, $title));
 
         return $this;
     }
 
-    public function warning(string $line, ?string $symbol = null): self
+    public function warning(string $contents, ?string $title = null): self
     {
-        $symbol ??= '⚠';
-
-        $this->writeln("<style=\"bg-dark-yellow fg-white\"> {$symbol} </style> <style=\"fg-yellow\">{$line}</style>");
+        $this->writeln((new MessageRenderer('⚠', 'yellow'))->render($contents, $title));
 
         return $this;
     }
 
-    public function success(string $line, ?string $symbol = null): self
+    public function success(string $contents, ?string $title = null): self
     {
-        $symbol ??= '✓';
-
-        $this->writeln("<style=\"bg-dark-green fg-white\"> {$symbol} </style> <style=\"fg-green\">{$line}</style>");
+        $this->writeln((new MessageRenderer('✓', 'green'))->render($contents, $title));
 
         return $this;
     }
@@ -181,6 +175,13 @@ final class GenericConsole implements Console
         $clone->label = $label;
 
         return $clone;
+    }
+
+    public function keyValue(string $key, ?string $value = null): self
+    {
+        $this->writeln((new KeyValueRenderer())->render($key, $value));
+
+        return $this;
     }
 
     public function component(InteractiveConsoleComponent $component, array $validation = []): mixed

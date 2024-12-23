@@ -63,13 +63,15 @@ interface Console
 
     public function header(string $header, ?string $subheader = null): self;
 
-    public function info(string $line, ?string $symbol = null): self;
+    public function info(string $contents, ?string $title = null): self;
 
-    public function error(string $line, ?string $symbol = null): self;
+    public function error(string $contents, ?string $title = null): self;
 
-    public function warning(string $line, ?string $symbol = null): self;
+    public function warning(string $contents, ?string $title = null): self;
 
-    public function success(string $line, ?string $symbol = null): self;
+    public function success(string $lcontentsine, ?string $title = null): self;
+
+    public function keyValue(string $key, ?string $value = null): self;
 
     /**
      * @param mixed|Closure(self): bool $condition

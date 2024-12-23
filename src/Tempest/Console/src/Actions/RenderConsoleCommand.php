@@ -32,7 +32,7 @@ final readonly class RenderConsoleCommand
 
         if ($this->renderDescription) {
             if ($consoleCommand->description !== null && $consoleCommand->description !== '') {
-                $parts[] = $consoleCommand->description;
+                $parts[] = "<style='dim'>{$consoleCommand->description}</style>";
             }
         }
 
@@ -43,7 +43,6 @@ final readonly class RenderConsoleCommand
     {
         return str($consoleCommand->getName())
             ->alignRight($this->longestCommandName, padding: $this->longestCommandName ? 2 : 0)
-            ->wrap(before: '<style="fg-cyan">', after: '</style>')
             ->toString();
     }
 
@@ -58,7 +57,7 @@ final readonly class RenderConsoleCommand
             default => $argument->name,
         };
 
-        $formattedArgumentName = str($formattedArgumentName)->wrap('<style="fg-cyan">', '</style>');
+        $formattedArgumentName = str($formattedArgumentName)->wrap('<style="fg-blue">', '</style>');
 
         if (! $argument->hasDefault) {
             return $formattedArgumentName->wrap('<style="fg-gray dim"><</style>', '<style="fg-gray dim">></style>')->toString();
@@ -88,8 +87,8 @@ final readonly class RenderConsoleCommand
             array: $argument->type::cases(),
         );
 
-        $partsAsString = ' {<style="fg-cyan">' . implode('|', $parts) . '</style>}';
-        $line = "<style=\"fg-cyan\">{$argument->name}</style>";
+        $partsAsString = ' {<style="fg-blue">' . implode('|', $parts) . '</style>}';
+        $line = "<style=\"fg-blue\">{$argument->name}</style>";
 
         if ($argument->hasDefault) {
             return "[{$line}={$argument->default->value}{$partsAsString}]";

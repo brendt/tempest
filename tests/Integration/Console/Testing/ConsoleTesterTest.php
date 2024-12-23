@@ -20,7 +20,7 @@ final class ConsoleTesterTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call(ComplexCommand::class)
-            ->assertContains('complex'); // missing input
+            ->assertContains('COMPLEX'); // missing input
     }
 
     public function test_call_with_closure(): void

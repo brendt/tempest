@@ -8,4 +8,8 @@ use Exception;
 
 final class CouldNotResolveCommand extends Exception
 {
+    public function __construct(public string $uuid)
+    {
+        parent::__construct("Could not resolve command [{$uuid}].");
+    }
 }

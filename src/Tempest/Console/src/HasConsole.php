@@ -99,30 +99,30 @@ trait HasConsole
         );
     }
 
-    public function info(string $line, ?string $symbol = null): self
+    public function info(string $contents, ?string $title = null): self
     {
-        $this->console->info($line, $symbol);
+        $this->console->info($contents, $title);
 
         return $this;
     }
 
-    public function error(string $line, ?string $symbol = null): self
+    public function error(string $contents, ?string $title = null): self
     {
-        $this->console->error($line, $symbol);
+        $this->console->error($contents, $title);
 
         return $this;
     }
 
-    public function warning(string $line, ?string $symbol = null): self
+    public function warning(string $contents, ?string $title = null): self
     {
-        $this->console->warning($line, $symbol);
+        $this->console->warning($contents, $title);
 
         return $this;
     }
 
-    public function success(string $line, ?string $symbol = null): self
+    public function success(string $contents, ?string $title = null): self
     {
-        $this->console->success($line, $symbol);
+        $this->console->success($contents, $title);
 
         return $this;
     }

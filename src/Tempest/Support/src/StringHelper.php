@@ -685,6 +685,10 @@ final readonly class StringHelper implements Stringable
             return $this;
         }
 
+        if ($characters < 0) {
+            $characters = mb_strlen($this->string) + $characters;
+        }
+
         return new self(rtrim(mb_strimwidth($this->string, 0, $characters, encoding: 'UTF-8')) . $end);
     }
 

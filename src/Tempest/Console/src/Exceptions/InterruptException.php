@@ -10,7 +10,6 @@ final class InterruptException extends ConsoleException
 {
     public function render(Console $console): void
     {
-        $console->writeln();
         $console->error('Interrupted by user.');
     }
 }

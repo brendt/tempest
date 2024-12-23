@@ -21,6 +21,7 @@ use Tempest\Console\Key;
 use Tempest\Console\Point;
 use Tempest\Console\StaticConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
+use UnitEnum;
 
 final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent
 {
@@ -36,12 +37,12 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
     public function __construct(
         public string $label,
         iterable $options,
-        public null|int|string $default = null,
+        public null|int|UnitEnum|string $default = null,
     ) {
         $this->bufferEnabled = false;
         $this->options = new OptionCollection($options);
         $this->buffer = new TextBuffer();
-        $this->renderer = new ChoiceRenderer(default: (string) $default, multiple: false);
+        $this->renderer = new ChoiceRenderer(default: $default, multiple: false);
         $this->updateQuery();
     }
 
@@ -77,6 +78,10 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
         } else {
             $controls['/'] = 'filter';
             $controls['space'] = 'select';
+        }
+
+        if ($this->default) {
+            $controls['alt+enter'] = 'default';
         }
 
         return [
@@ -128,13 +133,15 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
     }
 
     #[HandlesKey(Key::ENTER)]
-    public function enter(): null|int|string|Stringable
+    public function enter(): null|int|string|Stringable|UnitEnum
     {
-        $active = $this->options->getActive();
+        return $this->options->getRawActiveOption($this->default);
+    }
 
-        return $this->options->isList()
-            ? $active->value
-            : $active->key;
+    #[HandlesKey(Key::ALT_ENTER)]
+    public function altEnter(): null|int|string|Stringable|UnitEnum
+    {
+        return $this->default;
     }
 
     #[HandlesKey(Key::ESCAPE)]

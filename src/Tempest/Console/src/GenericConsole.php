@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-use BackedEnum;
 use Closure;
+use InvalidArgumentException;
 use Stringable;
 use Symfony\Component\Process\Process;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
@@ -28,7 +28,7 @@ use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Language;
 use Tempest\Support\ArrayHelper;
 use Tempest\Support\Conditions\HasConditions;
-use function Tempest\Support\arr;
+use UnitEnum;
 
 final class GenericConsole implements Console
 {
@@ -186,7 +186,7 @@ final class GenericConsole implements Console
 
     public function component(InteractiveConsoleComponent $component, array $validation = []): mixed
     {
-        if ($this->componentRenderer !== null && $this->componentRenderer->isComponentSupported($this, $component)) {
+        if ($this->componentRenderer !== null && $this->supportsPrompting() && $this->componentRenderer->isComponentSupported($this, $component)) {
             return $this->componentRenderer->render($this, $component, $validation);
         }
 
@@ -206,7 +206,7 @@ final class GenericConsole implements Console
         ?string $placeholder = null,
         ?string $hint = null,
         array $validation = [],
-    ): null|int|string|Stringable|array {
+    ): null|int|string|Stringable|UnitEnum|array {
         if ($this->isForced && $default) {
             return $default;
         }
@@ -215,29 +215,23 @@ final class GenericConsole implements Console
             $options = $options->toArray();
         }
 
-        if (is_a($options, BackedEnum::class, allow_string: true)) {
-            $options = arr($options::cases())->mapWithKeys(
-                fn (BackedEnum $enum) => yield $enum->value => $enum->name,
-            )->toArray();
+        if (! $multiple && is_array($default)) {
+            throw new InvalidArgumentException('The default value cannot be an array when `multiple` is `false`.');
         }
 
-        if ($default instanceof BackedEnum) {
-            $default = $default->value;
+        if ($options === null || $options === []) {
+            return $this->component(new TextInputComponent($question, $default, $placeholder, $hint, $multiline, $validation));
         }
 
-        $component = match (true) {
-            $options === null || $options === [] => new TextInputComponent($question, $default, $placeholder, $hint, $multiline),
-            $multiple => new MultipleChoiceComponent(
-                label: $question,
-                options: $options,
-                default: ArrayHelper::wrap($default),
-            ),
-            default => new SingleChoiceComponent(
-                label: $question,
-                options: $options,
-                default: $default,
-            ),
-        };
+        if ($multiple) {
+            return $this->component(new MultipleChoiceComponent($question, $options, ArrayHelper::wrap($default), $validation));
+        }
+
+        $component = new SingleChoiceComponent(
+            label: $question,
+            options: $options,
+            default: $default,
+        );
 
         return $this->component($component, $validation);
     }

@@ -8,7 +8,7 @@ namespace Tempest\Support {
     /**
      * Creates an instance of {@see StringHelper} using the given `$string`.
      */
-    function str(Stringable|string|null $string = ''): StringHelper
+    function str(Stringable|int|string|null $string = ''): StringHelper
     {
         return new StringHelper($string);
     }

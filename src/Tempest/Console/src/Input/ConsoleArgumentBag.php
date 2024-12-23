@@ -95,7 +95,9 @@ final class ConsoleArgumentBag
             return $argument;
         }
 
-        $resolved = $argumentDefinition->type::tryFrom($argument->value);
+        $resolved = $argument->value instanceof $argumentDefinition->type
+            ? $argument->value
+            : $argumentDefinition->type::tryFrom($argument->value);
 
         if ($resolved === null) {
             throw new InvalidEnumArgument(

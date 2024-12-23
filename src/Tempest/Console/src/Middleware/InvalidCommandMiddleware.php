@@ -48,10 +48,8 @@ final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
 
             $value = $this->console->ask(
                 question: str($argument->name)->snake(' ')->upperFirst()->toString(),
-                options: $isEnum
-                    ? $argument->type
-                    : null,
-                default: (string) $argument->default,
+                options: $isEnum ? $argument->type::cases() : null,
+                default: $argument->default,
                 hint: $argument->help ?? $argument->description,
                 validation: array_filter([
                     $isEnum

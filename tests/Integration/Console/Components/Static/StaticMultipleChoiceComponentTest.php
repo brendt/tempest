@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components\Static;
 
-use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Console\Console;
+use Tests\Tempest\Integration\Console\Fixtures\TestStringEnum;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -51,27 +51,7 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
             ->assertContains('["a","b"]');
     }
 
-    #[TestWith([['a', 'b', 'c'], ['b', 'k'], ['b']])]
-    #[TestWith([['foo' => 'foo1', 'bar' => 'bar2'], ['foo', 'baz'], ['foo']])]
-    #[TestWith([['foo' => 'foo1', 'bar' => 'bar2'], ['foo1'], []])]
-    public function test_supports_defaults_without_prompting(array $options, array $default, array $expected): void
-    {
-        $this->console
-            ->withoutPrompting()
-            ->call(function (Console $console) use ($options, $default): void {
-                $answer = $console->ask(
-                    question: 'test',
-                    options: $options,
-                    default: $default,
-                    multiple: true,
-                );
-
-                $console->writeln(json_encode($answer));
-            })
-            ->assertContains(json_encode($expected));
-    }
-
-    public function test_supports_defaults_with_prompting(): void
+    public function test_supports_defaults(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -87,5 +67,43 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
             ->submit()
             ->submit()
             ->assertContains(json_encode(['foo']));
+    }
+
+    public function test_supports_enum(): void
+    {
+        $this->console
+            ->call(function (Console $console): void {
+                $answer = $console->ask(
+                    question: 'test',
+                    options: TestStringEnum::cases(),
+                    multiple: true,
+                );
+
+                $console->writeln(json_encode($answer));
+            })
+            ->assertSee('[0] a')
+            ->assertSee('[1] b')
+            ->assertSee('[2] c')
+            ->submit('a,c')
+            ->submit()
+            ->assertContains(json_encode(['a', 'c']));
+    }
+
+    public function test_supports_enum_with_default(): void
+    {
+        $this->console
+            ->call(function (Console $console): void {
+                $answer = $console->ask(
+                    question: 'test',
+                    options: TestStringEnum::cases(),
+                    default: TestStringEnum::A,
+                    multiple: true,
+                );
+
+                $console->writeln(json_encode($answer));
+            })
+            ->submit()
+            ->submit()
+            ->assertContains(json_encode(['a']));
     }
 }

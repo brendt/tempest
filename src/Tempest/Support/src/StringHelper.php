@@ -20,7 +20,7 @@ final readonly class StringHelper implements Stringable
 
     private string $string;
 
-    public function __construct(Stringable|string|null $string = '')
+    public function __construct(Stringable|int|string|null $string = '')
     {
         $this->string = (string) ($string ?? '');
     }

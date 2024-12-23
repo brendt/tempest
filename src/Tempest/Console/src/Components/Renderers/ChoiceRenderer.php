@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Renderers;
 
+use Stringable;
 use Tempest\Console\Components\ComponentState;
 use Tempest\Console\Components\OptionCollection;
 use Tempest\Console\Components\TextBuffer;
 use Tempest\Console\Point;
 use Tempest\Console\Terminal\Terminal;
+use UnitEnum;
 
 final class ChoiceRenderer
 {
@@ -17,7 +19,7 @@ final class ChoiceRenderer
     public function __construct(
         private bool $multiple = true,
         private int $maximumOptions = 10,
-        private ?string $default = null,
+        private null|Stringable|UnitEnum|string $default = null,
     ) {
     }
 
@@ -39,7 +41,7 @@ final class ChoiceRenderer
                 '<style="fg-green">✓</style> ',
                 $this->multiple
                     ? '<style="dim">' . count($options->getSelectedOptions()) . ' selected</style>'
-                    : '<style="dim">' . $options->getActive()?->value . '</style>',
+                    : '<style="dim">' . $options->getActive()?->displayValue . '</style>',
             )->newLine();
 
             return $this->finishRender();
@@ -71,13 +73,13 @@ final class ChoiceRenderer
                 if (! $this->multiple) {
                     $this->line(
                         $options->isActive($option) ? $this->style('fg-magenta', '→ ') : '  ',
-                        $this->style($options->isSelected($option) ? 'fg-green bold' : '', $option->value),
+                        $this->style($options->isSelected($option) ? 'fg-green bold' : '', $option->displayValue),
                     );
                 } else {
                     $this->line(
                         $options->isActive($option) ? $this->style('fg-magenta', '→ ') : '  ',
                         $options->isSelected($option) ? $this->style('fg-green', '✓︎ ') : $this->style('fg-gray', '⋅ '),
-                        $this->style($options->isSelected($option) ? 'fg-green bold' : '', $option->value),
+                        $this->style($options->isSelected($option) ? 'fg-green bold' : '', $option->displayValue),
                     );
                 }
 

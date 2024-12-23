@@ -91,6 +91,7 @@ final class OptionCollection implements Iterator, Countable
         }
     }
 
+    /** @return ArrayHelper<Option> */
     public function getOptions(): ArrayHelper
     {
         return arr($this->filteredOptions)->values();
@@ -108,11 +109,15 @@ final class OptionCollection implements Iterator, Countable
     }
 
     /** @return array<mixed> */
-    public function getRawSelectedOptions(): array
+    public function getRawSelectedOptions(array $default = []): array
     {
         $selected = arr($this->selectedOptions)
             ->mapWithKeys(static fn (Option $option) => yield $option->key => $option->value)
             ->toArray();
+
+        if ($selected === []) {
+            return $default;
+        }
 
         // TODO: PR `tap` to `ArrayHelper`
         if (! $this->preserveKeys) {
@@ -120,6 +125,19 @@ final class OptionCollection implements Iterator, Countable
         }
 
         return $selected;
+    }
+
+    public function getRawActiveOption(mixed $default = null): mixed
+    {
+        $option = $this->getActive();
+
+        if (! $option) {
+            return $default;
+        }
+
+        return $this->isList()
+             ? $option->value
+             : $option->key;
     }
 
     /** @return array<Option> */

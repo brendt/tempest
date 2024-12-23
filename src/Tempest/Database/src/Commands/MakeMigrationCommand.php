@@ -6,6 +6,7 @@ namespace Tempest\Database\Commands;
 
 use function Tempest\get;
 use function Tempest\Support\arr;
+use function Tempest\Support\str;
 
 use Throwable;
 use Tempest\Validation\Rules\NotEmpty;
@@ -129,10 +130,11 @@ final class MakeMigrationCommand
             $appModels = $this->getAppDatabaseModels();
             $migrationModel = $this->ask('Model related to the migration', array_keys($appModels));
             $migrationModel = $appModels[$migrationModel] ?? null;
+            $migrationModelName = str($migrationModel?->getName() ?? '')->start('\\')->toString();
 
-            $replacements["'DummyModel'"] = sprintf('%s::class', $migrationModel?->getName());
+            $replacements["'DummyModel'"] = sprintf('%s::class', $migrationModelName);
         }
-        
+
         $this->stubFileGenerator->generateClassFile(
             stubFile: $stubFile,
             targetPath: $targetPath,

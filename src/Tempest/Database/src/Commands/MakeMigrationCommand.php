@@ -4,33 +4,29 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Commands;
 
+use FilesystemIterator;
+use InvalidArgumentException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use Tempest\Console\ConsoleArgument;
+use Tempest\Console\ConsoleCommand;
+use Tempest\Core\Composer;
+use Tempest\Core\DoNotDiscover;
+use Tempest\Core\PublishesFiles;
+use Tempest\Database\DatabaseModel;
+use Tempest\Database\Enums\MigrationType;
+use Tempest\Database\Stubs\MigrationModelStub;
+use Tempest\Database\Stubs\MigrationStub;
+use Tempest\Generation\DataObjects\StubFile;
+use Tempest\Generation\Exceptions\FileGenerationAbortedException;
+use Tempest\Generation\Exceptions\FileGenerationFailedException;
+use Tempest\Reflection\ClassReflector;
+use Tempest\Validation\Rules\EndsWith;
+use Tempest\Validation\Rules\NotEmpty;
+use Throwable;
 use function Tempest\get;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
-
-use Throwable;
-use Tempest\Validation\Rules\NotEmpty;
-use Tempest\Validation\Rules\EndsWith;
-use Tempest\Reflection\ClassReflector;
-use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use Tempest\Generation\Exceptions\FileGenerationAbortedException;
-use Tempest\Generation\Enums\StubFileType;
-use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Database\Stubs\MigrationStub;
-use Tempest\Database\Stubs\MigrationModelStub;
-use Tempest\Database\Enums\MigrationType;
-use Tempest\Database\DatabaseModel;
-use Tempest\Core\PublishesFiles;
-
-use Tempest\Core\DoNotDiscover;
-use Tempest\Core\Composer;
-use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleArgument;
-use SplFileInfo;
-use RecursiveIteratorIterator;
-use RecursiveDirectoryIterator;
-use InvalidArgumentException;
-use FilesystemIterator;
 
 final class MakeMigrationCommand
 {
@@ -55,8 +51,8 @@ final class MakeMigrationCommand
         try {
             $stubFile = $this->getStubFileFromMigrationType($migrationType);
             $targetPath = match ($migrationType) {
-                MigrationType::RAW => $this->generateRawFile( $fileName, $stubFile ),
-                default => $this->generateClassFile( $fileName, $stubFile, $migrationType ),
+                MigrationType::RAW => $this->generateRawFile($fileName, $stubFile),
+                default => $this->generateClassFile($fileName, $stubFile, $migrationType),
             };
 
             $this->success(sprintf('Migration file successfully created at "%s".', $targetPath));
@@ -69,7 +65,7 @@ final class MakeMigrationCommand
      * Generates a raw migration file.
      * @param string $fileName The name of the file.
      * @param StubFile $stubFile The stub file to use.
-     * 
+     *
      * @return string The path to the generated file.
      */
     private function generateRawFile(
@@ -81,7 +77,7 @@ final class MakeMigrationCommand
         $suggestedPath = str($this->getSuggestedPath('Dummy'))
             ->replace(
                 [ 'Dummy', '.php' ],
-                [ $now . '_' . $tableName, '.sql' ]
+                [ $now . '_' . $tableName, '.sql' ],
             )
             ->toString();
 
@@ -105,11 +101,11 @@ final class MakeMigrationCommand
 
     /**
      * Generates a class migration file.
-     * 
+     *
      * @param string $fileName The name of the file.
      * @param StubFile $stubFile The stub file to use.
      * @param MigrationType $migrationType The type of the migration.
-     * 
+     *
      * @return string The path to the generated file.
      */
     private function generateClassFile(
@@ -126,7 +122,7 @@ final class MakeMigrationCommand
             'dummy-table-name' => $tableName,
         ];
 
-        if ( $migrationType === MigrationType::MODEL ) {
+        if ($migrationType === MigrationType::MODEL) {
             $appModels = $this->getAppDatabaseModels();
             $migrationModel = $this->ask('Model related to the migration', array_keys($appModels));
             $migrationModel = $appModels[$migrationModel] ?? null;
@@ -161,22 +157,22 @@ final class MakeMigrationCommand
 
     /**
      * Get database models defined in the application.
-     * 
+     *
      * @return array<string,ClassReflector> The list of models.
      */
     private function getAppDatabaseModels(): array
     {
         $composer = get(Composer::class);
-        $directories = new RecursiveDirectoryIterator( $composer->mainNamespace->path, flags: FilesystemIterator::UNIX_PATHS | FilesystemIterator::SKIP_DOTS );
+        $directories = new RecursiveDirectoryIterator($composer->mainNamespace->path, flags: FilesystemIterator::UNIX_PATHS | FilesystemIterator::SKIP_DOTS);
         $files = new RecursiveIteratorIterator($directories);
         $databaseModels = [];
-        
+
         foreach ($files as $file) {
             // We assume that any PHP file that starts with an uppercase letter will be a class
             if ($file->getExtension() !== 'php') {
                 continue;
             }
-            if (ucfirst( $file->getFilename() ) !== $file->getFilename()) {
+            if (ucfirst($file->getFilename()) !== $file->getFilename()) {
                 continue;
             }
             // Try to create a PSR-compliant class name from the path
@@ -197,7 +193,7 @@ final class MakeMigrationCommand
             );
 
             // Bail if not a class
-            if ( ! class_exists( $fqcn ) ) {
+            if (! class_exists($fqcn)) {
                 continue;
             }
 
@@ -208,12 +204,12 @@ final class MakeMigrationCommand
             }
 
             // Bail if not a database model
-            if ( ! $class->implements(DatabaseModel::class) ) {
+            if (! $class->implements(DatabaseModel::class)) {
                 continue;
             }
 
             // Bail if the class should not be discovered
-            if ( $class->hasAttribute(DoNotDiscover::class) ) {
+            if ($class->hasAttribute(DoNotDiscover::class)) {
                 continue;
             }
 
@@ -221,7 +217,7 @@ final class MakeMigrationCommand
         }
 
         return arr($databaseModels)
-            ->mapWithKeys(fn( ClassReflector $model ) => yield $model->getName() => $model)
+            ->mapWithKeys(fn (ClassReflector $model) => yield $model->getName() => $model)
             ->toArray();
     }
 }

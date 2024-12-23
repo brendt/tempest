@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
+use Closure;
+use Tempest\Console\Exceptions\ConsoleException;
+use Tempest\Console\HasConsole;
+use Tempest\Container\Inject;
+use Tempest\Generation\ClassManipulator;
+use Tempest\Generation\DataObjects\StubFile;
+use Tempest\Generation\Enums\StubFileType;
+use Tempest\Generation\Exceptions\FileGenerationAbortedException;
+use Tempest\Generation\Exceptions\FileGenerationFailedException;
+use Tempest\Generation\StubFileGenerator;
+use Tempest\Support\NamespaceHelper;
+use Tempest\Validation\Rule;
+use Tempest\Validation\Rules\EndsWith;
+use Tempest\Validation\Rules\NotEmpty;
+use Throwable;
 use function Tempest\path;
 use function Tempest\Support\str;
-use Throwable;
-use Tempest\Validation\Rules\NotEmpty;
-use Tempest\Validation\Rules\EndsWith;
-use Tempest\Validation\Rule;
-use Tempest\Support\NamespaceHelper;
-use Tempest\Generation\StubFileGenerator;
-use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use Tempest\Generation\Exceptions\FileGenerationAbortedException;
-use Tempest\Generation\Enums\StubFileType;
-use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Generation\ClassManipulator;
-use Tempest\Container\Inject;
-use Tempest\Console\HasConsole;
-use Tempest\Console\Exceptions\ConsoleException;
-use Closure;
 
 /**
  * Provides a bunch of methods to publish and generate files and work with common user input.
@@ -162,7 +162,7 @@ trait PublishesFiles
      * Prompt the user for the target path to save the generated file.
      * @param string $suggestedPath The suggested path to show to the user.
      * @param ?array<Rule> Rules to use instead of the default ones.
-     * 
+     *
      * @return string The target path that the user has chosen.
      */
     public function promptTargetPath(string $suggestedPath, ?array $rules = null): string

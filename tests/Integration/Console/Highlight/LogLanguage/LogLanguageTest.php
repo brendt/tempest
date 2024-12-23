@@ -20,6 +20,6 @@ final class LogLanguageTest extends TestCase
 
         $parsed = $highlighter->parse('[2024-05-25T18:42:01.154192+00:00] tempest.DEBUG: logger [] []', new LogLanguage());
 
-        $this->assertSame("\e[94m[2024-05-25T18:42:01.154192+00:00]\e[39m \e[1m\e[104m tempest.DEBUG \e[0m: logger [] []", $parsed);
+        $this->assertSame("\e[94m[2024-05-25T18:42:01.154192+00:00]\e[39m \e[4mtempest.DEBUG\e[24m: logger [] []", $parsed);
     }
 }

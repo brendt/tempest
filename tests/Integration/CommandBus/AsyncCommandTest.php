@@ -39,9 +39,7 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
         $this->assertSame('Brent', $command->name);
         $this->assertFalse(MyAsyncCommandHandler::$isHandled);
 
-        $this->console
-            ->call('command:handle ' . $pendingCommands->keys()->first())
-            ->assertSee('Done');
+        $this->console->call('command:handle ' . $pendingCommands->keys()->first());
 
         $this->assertTrue(MyAsyncCommandHandler::$isHandled);
     }
@@ -57,9 +55,7 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
 
         $output = $this->getOutput($process);
         $this->assertStringContainsString('Monitoring for new commands', $output);
-        $this->assertStringContainsString('started at', $output);
-        $this->assertStringContainsString('finished at', $output);
-        $this->assertStringContainsString('Done', $output);
+        $this->assertStringContainsString('SUCCESS', $output);
         $process->stop();
     }
 
@@ -74,9 +70,7 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
 
         $output = $this->getOutput($process);
         $this->assertStringContainsString('Monitoring for new commands', $output);
-        $this->assertStringContainsString('started at', $output);
-        $this->assertStringContainsString('failed at', $output);
-        $this->assertStringContainsString('Failed command', $output);
+        $this->assertStringContainsString('FAILED', $output);
         $process->stop();
 
         arr(glob(__DIR__ . '/../../../src/Tempest/CommandBus/src/stored-commands/*.failed.txt'))

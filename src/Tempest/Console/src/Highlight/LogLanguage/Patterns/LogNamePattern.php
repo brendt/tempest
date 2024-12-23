@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Highlight\LogLanguage\Patterns;
 
-use Tempest\Console\Highlight\ConsoleTokenType;
+use Tempest\Console\Highlight\DynamicTokenType;
 use Tempest\Highlight\IsPattern;
 use Tempest\Highlight\Pattern;
 use Tempest\Highlight\Tokens\TokenType;
@@ -20,6 +20,6 @@ final readonly class LogNamePattern implements Pattern
 
     public function getTokenType(): TokenType
     {
-        return ConsoleTokenType::H2;
+        return new DynamicTokenType('underline');
     }
 }

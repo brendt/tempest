@@ -19,7 +19,7 @@ final class CacheClearCommandTest extends FrameworkIntegrationTestCase
             ->assertSee(ProjectCache::class)
             ->submit('0')
             ->submit('yes')
-            ->assertSee('Tempest\Cache\ProjectCache cleared successfully')
-            ->assertNotSee('Tempest\View\ViewCache cleared successfully');
+            ->assertSee('Tempest\Cache\ProjectCache')
+            ->assertNotSee('Tempest\View\ViewCache');
     }
 }

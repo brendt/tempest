@@ -51,7 +51,7 @@ final class TempestConsoleLanguageTest extends FrameworkIntegrationTestCase
         $content = sprintf("<file='%s'/>", root_path('composer.json'));
 
         $this->assertSame(
-            "\e]8;;/Users/enzoinnocenzi/Code/forks/tempest-framework/composer.json\e\composer.json\e]8;;\e\\",
+            "\e[4mcomposer.json\e[24m",
             (new FileInjection())->parse($content, $highlighter)->content,
         );
     }

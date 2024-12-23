@@ -39,12 +39,12 @@ final class MakeMigrationCommand
     )]
     public function __invoke(
         #[ConsoleArgument(
-            help: 'The file name of the migration',
+            description: 'The file name of the migration',
         )]
         string $fileName,
         #[ConsoleArgument(
             name: 'type',
-            help: 'The type of the migration to create',
+            description: 'The type of the migration to create',
         )]
         MigrationType $migrationType = MigrationType::OBJECT,
     ): void {

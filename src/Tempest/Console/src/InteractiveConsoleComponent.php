@@ -10,7 +10,7 @@ use Tempest\Console\Terminal\Terminal;
 
 interface InteractiveConsoleComponent
 {
-    public function render(Terminal $terminal): Generator|string;
+    public function render(Terminal $terminal): Generator|string|bool;
 
     public function renderFooter(Terminal $terminal): ?string;
 

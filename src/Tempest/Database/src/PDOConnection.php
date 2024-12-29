@@ -7,6 +7,7 @@ namespace Tempest\Database;
 use PDO;
 use PDOStatement;
 use Tempest\Database\Connections\DatabaseConnection;
+use Tempest\Database\Exceptions\ConnectionClosed;
 
 final class PDOConnection implements Connection
 {
@@ -18,26 +19,46 @@ final class PDOConnection implements Connection
 
     public function beginTransaction(): bool
     {
+        if ($this->pdo === null) {
+            throw new ConnectionClosed();
+        }
+
         return $this->pdo->beginTransaction();
     }
 
     public function commit(): bool
     {
+        if ($this->pdo === null) {
+            throw new ConnectionClosed();
+        }
+
         return $this->pdo->commit();
     }
 
     public function rollback(): bool
     {
+        if ($this->pdo === null) {
+            throw new ConnectionClosed();
+        }
+
         return $this->pdo->rollBack();
     }
 
     public function lastInsertId(): false|string
     {
+        if ($this->pdo === null) {
+            throw new ConnectionClosed();
+        }
+
         return $this->pdo->lastInsertId();
     }
 
     public function prepare(string $sql): false|PDOStatement
     {
+        if ($this->pdo === null) {
+            throw new ConnectionClosed();
+        }
+
         return $this->pdo->prepare($sql);
     }
 

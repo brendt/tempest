@@ -7,6 +7,7 @@ namespace Tempest\Database;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
+use Tempest\Core\AppConfig;
 
 final class ConnectionInitializer implements Initializer
 {
@@ -16,7 +17,7 @@ final class ConnectionInitializer implements Initializer
     public function initialize(Container $container): Connection
     {
         // Reuse same connection instance in unit tests
-        if (self::$instance !== null) {
+        if (self::$instance !== null && $container->get(AppConfig::class)->environment->isTesting()) {
             return self::$instance;
         }
 

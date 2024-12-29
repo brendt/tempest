@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Database;
+namespace Tempest\Database\Connections;
 
+use Tempest\Database\DatabaseDialect;
 use Tempest\Database\Tables\NamingStrategy;
 
 interface DatabaseConnection

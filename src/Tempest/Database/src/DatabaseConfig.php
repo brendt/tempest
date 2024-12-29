@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
+use Tempest\Database\Connections\DatabaseConnection;
+
 final class DatabaseConfig
 {
     private array $migrations = [];

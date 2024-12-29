@@ -12,11 +12,11 @@ use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Transactions\TransactionManager;
 use Throwable;
 
-final class GenericDatabase implements Database
+final readonly class GenericDatabase implements Database
 {
     public function __construct(
-        private PDO $pdo,
-        private readonly TransactionManager $transactionManager,
+        private Connection $connection,
+        private TransactionManager $transactionManager,
     ) {
     }
 
@@ -25,7 +25,7 @@ final class GenericDatabase implements Database
         $bindings = $this->resolveBindings($query);
 
         try {
-            $this->pdo
+            $this->connection
                 ->prepare($query->getSql())
                 ->execute($bindings);
         } catch (PDOException $pdoException) {
@@ -35,12 +35,12 @@ final class GenericDatabase implements Database
 
     public function getLastInsertId(): Id
     {
-        return new Id($this->pdo->lastInsertId());
+        return new Id($this->connection->lastInsertId());
     }
 
     public function fetch(Query $query): array
     {
-        $pdoQuery = $this->pdo->prepare($query->getSql());
+        $pdoQuery = $this->connection->prepare($query->getSql());
 
         $pdoQuery->execute($this->resolveBindings($query));
 

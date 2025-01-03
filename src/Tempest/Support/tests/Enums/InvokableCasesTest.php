@@ -33,4 +33,27 @@ final class InvokableCasesTest extends TestCase
             actual: $case()
         );
     }
+
+    #[Test]
+    public function static_call_backed_enum(): void {
+        $this->assertSame(
+            expected: SampleStatusBackedEnum::PUBLISH->value,
+            actual: SampleStatusBackedEnum::PUBLISH()
+        );
+    }
+
+    #[Test]
+    public function static_call_pure_enum(): void {
+        $this->assertSame(
+            expected: SampleStatusPureEnum::PUBLISH->name,
+            actual: SampleStatusPureEnum::PUBLISH()
+        );
+    }
+
+    #[Test]
+    public function static_call_throw_exception_on_invalid_case(): void {
+        $this->expectException(\InvalidArgumentException::class);
+        
+        SampleStatusBackedEnum::UNKNOWN();
+    }
 }

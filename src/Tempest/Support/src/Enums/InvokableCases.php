@@ -9,6 +9,9 @@ use InvalidArgumentException;
 
 use function Tempest\Support\arr;
 
+/**
+ * This trait provides the ability to call an enum case as a function to get its value
+ */
 trait InvokableCases
 {
     /**

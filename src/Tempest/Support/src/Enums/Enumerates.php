@@ -6,6 +6,7 @@ namespace Tempest\Support\Enums;
 
 use Tempest\Support\Enums\InvokableCases;
 use Tempest\Support\Enums\HelperMethods;
+use Tempest\Support\Enums\Comparable;
 
 /**
  * Use this trait to supercharge your enums with all enums features at once
@@ -15,4 +16,5 @@ trait Enumerates
 {
     use InvokableCases;
     use HelperMethods;
+    use Comparable;
 }

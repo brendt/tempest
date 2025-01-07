@@ -2,12 +2,10 @@
 
 namespace Tempest\Support\Tests\Fixtures\Enums;
 
-use Tempest\Support\Enums\HelperMethods;
-use Tempest\Support\Enums\InvokableCases;
+use Tempest\Support\Enums\Enumerates;
 
 enum SampleStatusPureEnum {
-    use InvokableCases;
-    use HelperMethods;
+    use Enumerates;
     
     case PUBLISH;
     case DRAFT;

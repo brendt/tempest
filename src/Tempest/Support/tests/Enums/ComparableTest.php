@@ -186,11 +186,6 @@ final class ComparableTest extends TestCase
         $this->assertFalse(
             SampleStatusBackedEnum::has('Publish')
         );
-
-        // Integer values
-        $this->assertFalse(
-            SampleIntegerBackedEnum::has(404)
-        );
     }
 
     #[Test]
@@ -228,11 +223,6 @@ final class ComparableTest extends TestCase
         $this->assertTrue(
             SampleStatusBackedEnum::hasNot('Publish')
         );
-
-        // Integer values
-        $this->assertTrue(
-            SampleIntegerBackedEnum::hasNot(404)
-        );
     }
 
     #[Test]
@@ -248,6 +238,90 @@ final class ComparableTest extends TestCase
         // Case sensitive
         $this->assertTrue(
             SampleStatusPureEnum::hasNot('Publish')
+        );
+    }
+
+    #[Test]
+    public function has_value_method_with_backed_enum(): void {
+        $this->assertTrue(
+            SampleStatusBackedEnum::hasValue('publish')
+        );
+
+        $this->assertFalse(
+            SampleStatusBackedEnum::hasValue('REVISION')
+        );
+
+        // Not include name
+        $this->assertFalse(
+            SampleStatusBackedEnum::hasValue('DRAFT')
+        );
+
+        // Case sensitive
+        $this->assertFalse(
+            SampleStatusBackedEnum::hasValue('Publish')
+        );
+
+        // Integer values
+        $this->assertTrue(
+            SampleIntegerBackedEnum::hasValue(404)
+        );
+    }
+
+    #[Test]
+    public function has_value_method_with_pure_enum(): void {
+        $this->assertTrue(
+            SampleStatusPureEnum::hasValue('PUBLISH')
+        );
+
+        $this->assertFalse(
+            SampleStatusPureEnum::hasValue('NOT_FOUND')
+        );
+
+        // Case sensitive
+        $this->assertFalse(
+            SampleStatusPureEnum::hasValue('Publish')
+        );
+    }
+
+    #[Test]
+    public function has_not_value_method_with_backed_enum(): void {
+        $this->assertFalse(
+            SampleStatusBackedEnum::hasNotValue('publish')
+        );
+
+        $this->assertTrue(
+            SampleStatusBackedEnum::hasNotValue('REVISION')
+        );
+
+        // Not include name
+        $this->assertTrue(
+            SampleStatusBackedEnum::hasNotValue('DRAFT')
+        );
+
+        // Case sensitive
+        $this->assertTrue(
+            SampleStatusBackedEnum::hasNotValue('Publish')
+        );
+
+        // Integer values
+        $this->assertFalse(
+            SampleIntegerBackedEnum::hasNotValue(404)
+        );
+    }
+
+    #[Test]
+    public function has_not_value_method_with_pure_enum(): void {
+        $this->assertFalse(
+            SampleStatusPureEnum::hasNotValue('PUBLISH')
+        );
+
+        $this->assertTrue(
+            SampleStatusPureEnum::hasNotValue('NOT_FOUND')
+        );
+
+        // Case sensitive
+        $this->assertTrue(
+            SampleStatusPureEnum::hasNotValue('Publish')
         );
     }
 }

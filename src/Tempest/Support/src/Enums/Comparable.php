@@ -69,28 +69,54 @@ trait Comparable
     }
 
     /**
+     * Check if the current enum has the name in its cases
+     *
+     * @param string $name The enum case name
+     *
+     * @return boolean True if the name is in the enum, false otherwise
+     */
+    public static function has( string $name ): bool {
+        $caseNames = array_column(static::cases(), 'name');
+        
+        return in_array($name, $caseNames, strict: true);
+    }
+
+    /**
+     * Check if the current enum does not have the name in its cases
+     *
+     * @param string $name The enum case name
+     *
+     * @return boolean True if the name is not in the enum, false otherwise
+     */
+    public static function hasNot( string $name ): bool {
+        return ! self::has($name);
+    }
+
+    /**
      * Check if the current enum has the value in its cases
-     * For Pure enums, the value must be string and correspond to the case name
+     * For Pure enums, this method is the equivalent of `has()`
      *
      * @param string|int $value The value to check
      *
      * @return boolean True if the value is in the enum, false otherwise
      */
-    public static function has( string|int $value ): bool {
-        $caseValues = array_column(static::cases(), 'name');
-        
+    public static function hasValue( string|int $value ): bool {
+        $caseValues = is_subclass_of(static::class, \BackedEnum::class)
+            ? array_column(static::cases(), 'value')
+            : array_column(static::cases(), 'name');
+
         return in_array($value, $caseValues, strict: true);
     }
 
     /**
      * Check if the current enum does not have the value in its cases
-     * For Pure enums, the value must be string and correspond to the case name
+     * For Pure enums, this method is the equivalent of `hasNot()`
      *
      * @param string|int $value The value to check
      *
      * @return boolean True if the value is not in the enum, false otherwise
      */
-    public static function hasNot( string|int $value ): bool {
-        return ! self::has($value);
+    public static function hasNotValue( string|int $value ): bool {
+        return ! self::hasValue($value);
     }
 }

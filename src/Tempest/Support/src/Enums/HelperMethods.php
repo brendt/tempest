@@ -36,11 +36,23 @@ trait HelperMethods
     }
 
     /**
-     * Store all enum cases in an array
+     * Wrap all enum cases in an array
      *
      * @return ArrayHelper<static>
      */
     public static function collect(): ArrayHelper {
         return arr(static::cases());
+    }
+
+    /**
+     * Returns an associative array of case names and values
+     * For pure enums, this method is the equivalent of `values()`
+     *
+     * @return array<int|string, string>
+     */
+    public static function options(): array {
+        return is_subclass_of(static::class, \BackedEnum::class)
+            ? array_column(static::cases(), 'value', 'name')
+            : self::values();
     }
 }

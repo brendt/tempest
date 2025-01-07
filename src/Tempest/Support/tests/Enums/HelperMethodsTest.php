@@ -92,4 +92,36 @@ final class HelperMethodsTest extends TestCase
             actual: SampleStatusBackedEnum::collect()
         );
     }
+
+    #[Test]
+    public function options_method_backed_enum(): void {
+        $this->assertSame(
+            expected: SampleStatusBackedEnum::options(),
+            actual: [
+                'PUBLISH' => 'publish',
+                'DRAFT' => 'draft',
+                'TRASH' => 'trash'
+            ]
+        );
+    }
+
+    #[Test]
+    public function options_method_pure_enum(): void {
+        $this->assertSame(
+            expected: SampleStatusPureEnum::options(),
+            actual: [
+                'PUBLISH',
+                'DRAFT',
+                'TRASH'
+            ]
+        );
+    }
+
+    #[Test]
+    public function options_returns_empty_array_with_empty_enum(): void {
+        $this->assertSame(
+            expected: EmptyEnum::options(),
+            actual: []
+        );
+    }
 }

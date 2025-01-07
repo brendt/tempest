@@ -6,6 +6,7 @@ namespace Tempest\Support\Tests;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Support\Tests\Fixtures\Enums\SampleIntegerBackedEnum;
 use Tempest\Support\Tests\Fixtures\Enums\SampleStatusBackedEnum;
 use Tempest\Support\Tests\Fixtures\Enums\SampleStatusPureEnum;
 
@@ -163,6 +164,90 @@ final class ComparableTest extends TestCase
     public function not_in_method_returns_true_with_empty_array(): void {
         $this->assertTrue(
             SampleStatusBackedEnum::PUBLISH->notIn([])
+        );
+    }
+
+    #[Test]
+    public function has_method_with_backed_enum(): void {
+        $this->assertTrue(
+            SampleStatusBackedEnum::has('PUBLISH')
+        );
+
+        $this->assertFalse(
+            SampleStatusBackedEnum::has('REVISION')
+        );
+
+        // Not include value
+        $this->assertFalse(
+            SampleStatusBackedEnum::has('draft')
+        );
+
+        // Case sensitive
+        $this->assertFalse(
+            SampleStatusBackedEnum::has('Publish')
+        );
+
+        // Integer values
+        $this->assertFalse(
+            SampleIntegerBackedEnum::has(404)
+        );
+    }
+
+    #[Test]
+    public function has_method_with_pure_enum(): void {
+        $this->assertTrue(
+            SampleStatusPureEnum::has('PUBLISH')
+        );
+
+        $this->assertFalse(
+            SampleStatusPureEnum::has('NOT_FOUND')
+        );
+
+        // Case sensitive
+        $this->assertFalse(
+            SampleStatusPureEnum::has('Publish')
+        );
+    }
+
+    #[Test]
+    public function has_not_method_with_backed_enum(): void {
+        $this->assertFalse(
+            SampleStatusBackedEnum::hasNot('PUBLISH')
+        );
+
+        $this->assertTrue(
+            SampleStatusBackedEnum::hasNot('REVISION')
+        );
+
+        // Not include value
+        $this->assertTrue(
+            SampleStatusBackedEnum::hasNot('draft')
+        );
+
+        // Case sensitive
+        $this->assertTrue(
+            SampleStatusBackedEnum::hasNot('Publish')
+        );
+
+        // Integer values
+        $this->assertTrue(
+            SampleIntegerBackedEnum::hasNot(404)
+        );
+    }
+
+    #[Test]
+    public function has_not_method_with_pure_enum(): void {
+        $this->assertFalse(
+            SampleStatusPureEnum::hasNot('PUBLISH')
+        );
+
+        $this->assertTrue(
+            SampleStatusPureEnum::hasNot('NOT_FOUND')
+        );
+
+        // Case sensitive
+        $this->assertTrue(
+            SampleStatusPureEnum::hasNot('Publish')
         );
     }
 }

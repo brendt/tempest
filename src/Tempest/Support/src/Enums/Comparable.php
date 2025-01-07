@@ -12,7 +12,7 @@ use Traversable;
 trait Comparable
 {
     /**
-     * Check if the current enum is equal to the given enum
+     * Check if the current enum case is equal to the given enum
      *
      * @param \UnitEnum $enum The enum to compare
      *
@@ -23,7 +23,7 @@ trait Comparable
     }
 
     /**
-     * Check if the current enum is not equal to the given enum
+     * Check if the current enum case is not equal to the given enum
      *
      * @param \UnitEnum $enum The enum to compare
      *
@@ -34,7 +34,7 @@ trait Comparable
     }
 
     /**
-     * Check if the current enum is in the given list of enums
+     * Check if the current enum case is in the given list of enums
      *
      * @param \Traversable<\UnitEnum>|array<\UnitEnum> $enums The list of enums to check
      *
@@ -58,7 +58,7 @@ trait Comparable
     }
 
     /**
-     * Check if the current enum is not in the given list of enums
+     * Check if the current enum case is not in the given list of enums
      *
      * @param \Traversable<\UnitEnum>|array<\UnitEnum> $enums The list of enums to check
      *
@@ -66,5 +66,31 @@ trait Comparable
      */
     public function notIn( Traversable|array $enums ): bool {
         return ! $this->in($enums);
+    }
+
+    /**
+     * Check if the current enum has the value in its cases
+     * For Pure enums, the value must be string and correspond to the case name
+     *
+     * @param string|int $value The value to check
+     *
+     * @return boolean True if the value is in the enum, false otherwise
+     */
+    public static function has( string|int $value ): bool {
+        $caseValues = array_column(static::cases(), 'name');
+        
+        return in_array($value, $caseValues, strict: true);
+    }
+
+    /**
+     * Check if the current enum does not have the value in its cases
+     * For Pure enums, the value must be string and correspond to the case name
+     *
+     * @param string|int $value The value to check
+     *
+     * @return boolean True if the value is not in the enum, false otherwise
+     */
+    public static function hasNot( string|int $value ): bool {
+        return ! self::has($value);
     }
 }

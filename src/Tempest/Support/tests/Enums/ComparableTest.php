@@ -73,4 +73,96 @@ final class ComparableTest extends TestCase
             SampleStatusPureEnum::PUBLISH->isNot(SampleStatusBackedEnum::PUBLISH)
         );
     }
+
+    #[Test]
+    public function in_method_with_backed_enum(): void {
+        $this->assertTrue(
+            SampleStatusBackedEnum::PUBLISH->in([SampleStatusBackedEnum::PUBLISH, SampleStatusBackedEnum::DRAFT])
+        );
+
+        $this->assertFalse(
+            SampleStatusBackedEnum::PUBLISH->in([SampleStatusBackedEnum::DRAFT, SampleStatusBackedEnum::TRASH])
+        );
+
+        $this->assertFalse(
+            SampleStatusBackedEnum::PUBLISH->in([SampleStatusPureEnum::PUBLISH, SampleStatusPureEnum::DRAFT])
+        );
+    }
+
+    #[Test]
+    public function in_method_accepts_iterator(): void {
+        $this->assertTrue(
+            SampleStatusBackedEnum::PUBLISH->in(
+                new \ArrayIterator([SampleStatusBackedEnum::PUBLISH, SampleStatusBackedEnum::DRAFT])
+            )
+        );
+    }
+
+    #[Test]
+    public function in_method_returns_false_with_empty_array(): void {
+        $this->assertFalse(
+            SampleStatusBackedEnum::PUBLISH->in([])
+        );
+    }
+
+    #[Test]
+    public function in_method_with_pure_enum(): void {
+        $this->assertTrue(
+            SampleStatusPureEnum::PUBLISH->in([SampleStatusPureEnum::PUBLISH, SampleStatusPureEnum::DRAFT])
+        );
+
+        $this->assertFalse(
+            SampleStatusPureEnum::PUBLISH->in([SampleStatusPureEnum::DRAFT, SampleStatusPureEnum::TRASH])
+        );
+
+        $this->assertFalse(
+            SampleStatusPureEnum::PUBLISH->in([SampleStatusBackedEnum::PUBLISH, SampleStatusBackedEnum::DRAFT])
+        );
+    }
+
+    #[Test]
+    public function not_in_method_with_backed_enum(): void {
+        $this->assertFalse(
+            SampleStatusBackedEnum::PUBLISH->notIn([SampleStatusBackedEnum::PUBLISH, SampleStatusBackedEnum::DRAFT])
+        );
+
+        $this->assertTrue(
+            SampleStatusBackedEnum::PUBLISH->notIn([SampleStatusBackedEnum::DRAFT, SampleStatusBackedEnum::TRASH])
+        );
+
+        $this->assertTrue(
+            SampleStatusBackedEnum::PUBLISH->notIn([SampleStatusPureEnum::PUBLISH, SampleStatusPureEnum::DRAFT])
+        );
+    }
+
+    #[Test]
+    public function not_in_method_with_pure_enum(): void {
+        $this->assertFalse(
+            SampleStatusPureEnum::PUBLISH->notIn([SampleStatusPureEnum::PUBLISH, SampleStatusPureEnum::DRAFT])
+        );
+
+        $this->assertTrue(
+            SampleStatusPureEnum::PUBLISH->notIn([SampleStatusPureEnum::DRAFT, SampleStatusPureEnum::TRASH])
+        );
+
+        $this->assertTrue(
+            SampleStatusPureEnum::PUBLISH->notIn([SampleStatusBackedEnum::PUBLISH, SampleStatusBackedEnum::DRAFT])
+        );
+    }
+
+    #[Test]
+    public function not_in_method_accepts_iterator(): void {
+        $this->assertTrue(
+            SampleStatusBackedEnum::PUBLISH->notIn(
+                new \ArrayIterator([SampleStatusBackedEnum::DRAFT, SampleStatusBackedEnum::TRASH])
+            )
+        );
+    }
+
+    #[Test]
+    public function not_in_method_returns_true_with_empty_array(): void {
+        $this->assertTrue(
+            SampleStatusBackedEnum::PUBLISH->notIn([])
+        );
+    }
 }

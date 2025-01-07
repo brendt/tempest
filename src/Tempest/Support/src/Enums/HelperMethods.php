@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Enums;
 
+use Tempest\Support\ArrayHelper;
+
+use function Tempest\Support\arr;
+
 /**
  * This trait provides some useful methods for enums
  */
@@ -29,5 +33,14 @@ trait HelperMethods
         return is_subclass_of(static::class, \BackedEnum::class)
             ? array_column(static::cases(), 'value')
             : array_column(static::cases(), 'name');
+    }
+
+    /**
+     * Store all enum cases in an array
+     *
+     * @return ArrayHelper<static>
+     */
+    public static function collect(): ArrayHelper {
+        return arr(static::cases());
     }
 }

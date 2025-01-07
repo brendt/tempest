@@ -9,6 +9,7 @@ use Tempest\Support\Tests\Fixtures\Enums\SampleStatusBackedEnum;
 use Tempest\Support\Tests\Fixtures\Enums\EmptyEnum;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Support\ArrayHelper;
 
 /**
  * @internal
@@ -76,6 +77,19 @@ final class HelperMethodsTest extends TestCase
         $this->assertSame(
             expected: EmptyEnum::values(),
             actual: []
+        );
+    }
+
+    #[Test]
+    public function collect(): void {
+        $this->assertSame(
+            expected: SampleStatusBackedEnum::cases(),
+            actual: SampleStatusBackedEnum::collect()->toArray()
+        );
+
+        $this->assertInstanceOf(
+            expected: ArrayHelper::class,
+            actual: SampleStatusBackedEnum::collect()
         );
     }
 }

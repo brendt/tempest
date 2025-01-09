@@ -29,12 +29,21 @@ final class Terminal
 
     private ?string $tty = null;
 
-    private bool $supportsTty = true;
+    private bool $supportsTty {
+        get {
+            if (! $this->supportsTty) {
+                return false;
+            }
+
+            return self::supportsTty();
+        }
+    }
 
     public function __construct(
         private readonly Console $console,
     ) {
         $this->updateActualSize();
+        $this->switchToInteractiveMode();
 
         $this->initialCursor = $this->supportsTty()
             ? new TerminalCursor($this->console, $this)
@@ -138,12 +147,8 @@ final class Terminal
         return $this;
     }
 
-    public function supportsTty(): bool
+    public static function supportsTty(): bool
     {
-        if ($this->supportsTty === false) {
-            return false;
-        }
-
         if (! function_exists('shell_exec')) {
             return false;
         }

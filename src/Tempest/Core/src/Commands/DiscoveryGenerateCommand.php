@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Core\Commands;
 
+use Closure;
 use Tempest\Cache\DiscoveryCacheStrategy;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
@@ -37,22 +38,21 @@ final readonly class DiscoveryGenerateCommand
 
         $this->clearDiscoveryCache();
 
-        $this->generateDiscoveryCache($strategy);
+        $this->console->task(
+            label: "Generating discovery cache using the {$strategy->value} strategy",
+            handler: fn (Closure $log) => $this->generateDiscoveryCache($strategy, $log),
+        );
 
         $this->discoveryCache->storeStrategy($strategy);
     }
 
     public function clearDiscoveryCache(): void
     {
-        $this->info('Clearing existing discovery cache…');
-
-        $this->console->call('discovery:clear');
+        $this->console->call(DiscoveryClearCommand::class);
     }
 
-    public function generateDiscoveryCache(DiscoveryCacheStrategy $strategy): void
+    public function generateDiscoveryCache(DiscoveryCacheStrategy $strategy, Closure $log): void
     {
-        $this->info(sprintf('Generating new discovery cache… (cache strategy used: %s)', $strategy->value));
-
         $kernel = $this->resolveKernel();
 
         $loadDiscoveryClasses = new LoadDiscoveryClasses(
@@ -63,9 +63,8 @@ final readonly class DiscoveryGenerateCommand
 
         $discoveries = $loadDiscoveryClasses->build();
 
-        $count = 0;
-
         foreach ($discoveries as $discovery) {
+            $log($discovery::class);
             $discoveryItems = $discovery->getItems();
 
             if ($strategy === DiscoveryCacheStrategy::PARTIAL) {
@@ -73,14 +72,7 @@ final readonly class DiscoveryGenerateCommand
             }
 
             $this->discoveryCache->store($discovery, $discoveryItems);
-
-            $count += $discoveryItems->count();
         }
-
-        $this->success(sprintf(
-            'Cached <em>%d</em> items',
-            $count,
-        ));
     }
 
     private function resolveDiscoveryCacheStrategy(): DiscoveryCacheStrategy

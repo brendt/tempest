@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Cache;
 
 use Tempest\Cache\ProjectCache;
+use Tempest\View\ViewCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -19,7 +20,7 @@ final class CacheClearCommandTest extends FrameworkIntegrationTestCase
             ->assertSee(ProjectCache::class)
             ->submit('0')
             ->submit('yes')
-            ->assertSee(\Tempest\Cache\ProjectCache::class)
-            ->assertNotSee(\Tempest\View\ViewCache::class);
+            ->assertSee(ProjectCache::class)
+            ->assertNotSee(ViewCache::class);
     }
 }

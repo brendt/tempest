@@ -80,7 +80,7 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
             $controls['space'] = 'select';
         }
 
-        if ($this->default) {
+        if ($this->default !== null) {
             $controls['alt+enter'] = 'default';
         }
 

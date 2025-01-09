@@ -51,6 +51,7 @@ final class TaskComponent implements InteractiveConsoleComponent, HasStaticCompo
         readonly string $label,
         private null|Process|Closure $handler = null,
     ) {
+        $this->startedAt = hrtime(as_number: true);
         $this->handler = $this->resolveHandler($handler);
         $this->renderer = new TaskRenderer(new SpinnerRenderer(), $label);
         $this->startedAt = hrtime(as_number: true);

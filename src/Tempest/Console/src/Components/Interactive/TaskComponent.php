@@ -52,9 +52,7 @@ final class TaskComponent implements InteractiveConsoleComponent, HasStaticCompo
         private null|Process|Closure $handler = null,
     ) {
         $this->startedAt = hrtime(as_number: true);
-        $this->handler = $this->resolveHandler($handler);
         $this->renderer = new TaskRenderer(new SpinnerRenderer(), $label);
-        $this->startedAt = hrtime(as_number: true);
     }
 
     public function render(Terminal $terminal): bool|Generator
@@ -76,7 +74,7 @@ final class TaskComponent implements InteractiveConsoleComponent, HasStaticCompo
             throw new RuntimeException('Could not fork process');
         }
 
-        if (! $this->processId) {
+        if ($this->processId === 0) {
             $this->executeHandler();
         }
 
@@ -148,7 +146,7 @@ final class TaskComponent implements InteractiveConsoleComponent, HasStaticCompo
         $this->sockets = [];
     }
 
-    private function executeHandler(): void
+    private function executeHandler(): never
     {
         $log = function (string ...$lines): void {
             arr($lines)
@@ -159,7 +157,7 @@ final class TaskComponent implements InteractiveConsoleComponent, HasStaticCompo
         };
 
         try {
-            exit((int) (($this->handler ?? static fn (): bool => true)($log) === false));
+            exit((int) (($this->resolveHandler($this->handler) ?? static fn (): bool => true)($log) === false));
         } catch (Throwable) {
             exit(1);
         }
@@ -179,7 +177,7 @@ final class TaskComponent implements InteractiveConsoleComponent, HasStaticCompo
                     }
 
                     if ($line = trim($buffer)) {
-                        $log($buffer);
+                        $log($line);
                     }
 
                     return true;

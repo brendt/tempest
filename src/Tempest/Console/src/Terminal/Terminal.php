@@ -29,7 +29,7 @@ final class Terminal
 
     private ?string $tty = null;
 
-    private bool $supportsTty {
+    private(set) bool $supportsTty {
         get {
             if (! $this->supportsTty) {
                 return false;
@@ -45,7 +45,7 @@ final class Terminal
         $this->updateActualSize();
         $this->switchToInteractiveMode();
 
-        $this->initialCursor = $this->supportsTty()
+        $this->initialCursor = $this->supportsTty
             ? new TerminalCursor($this->console, $this)
             : new GenericCursor();
 
@@ -54,7 +54,7 @@ final class Terminal
 
     public function switchToInteractiveMode(): self
     {
-        if (! $this->supportsTty()) {
+        if (! $this->supportsTty) {
             return $this;
         }
 
@@ -68,7 +68,7 @@ final class Terminal
 
     public function switchToNormalMode(): self
     {
-        if (! $this->supportsTty()) {
+        if (! $this->supportsTty) {
             return $this;
         }
 
@@ -221,8 +221,8 @@ final class Terminal
 
     private function updateActualSize(): self
     {
-        $this->width = $this->supportsTty() ? (int) exec('tput cols') : 80;
-        $this->height = $this->supportsTty() ? (int) exec('tput lines') : 25;
+        $this->width = $this->supportsTty ? (int) exec('tput cols') : 80;
+        $this->height = $this->supportsTty ? (int) exec('tput lines') : 25;
 
         return $this;
     }

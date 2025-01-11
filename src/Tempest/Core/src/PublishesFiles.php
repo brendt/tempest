@@ -16,6 +16,7 @@ use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Generation\StubFileGenerator;
 use Tempest\Support\NamespaceHelper;
+use Tempest\Validation\Rule;
 use Tempest\Validation\Rules\EndsWith;
 use Tempest\Validation\Rules\NotEmpty;
 use Throwable;
@@ -161,16 +162,19 @@ trait PublishesFiles
     /**
      * Prompt the user for the target path to save the generated file.
      * @param string $suggestedPath The suggested path to show to the user.
+     * @param ?array<Rule> Rules to use instead of the default ones.
+     *
      * @return string The target path that the user has chosen.
      */
-    public function promptTargetPath(string $suggestedPath): string
+    public function promptTargetPath(string $suggestedPath, ?array $rules = null): string
     {
         $className = NamespaceHelper::toClassName($suggestedPath);
+        $rules ??= [new NotEmpty(), new EndsWith('.php')];
 
         return $this->console->ask(
             question: sprintf('Where do you want to save the file "%s"?', $className),
             default: $suggestedPath,
-            validation: [new NotEmpty(), new EndsWith('.php')],
+            validation: $rules,
         );
     }
 

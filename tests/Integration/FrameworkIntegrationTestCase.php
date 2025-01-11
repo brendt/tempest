@@ -14,6 +14,7 @@ use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
 use Tempest\Core\ShellExecutor;
 use Tempest\Core\ShellExecutors\NullShellExecutor;
+use Tempest\Database\CachedConnectionInitializer;
 use Tempest\Database\DatabaseConfig;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Discovery\DiscoveryLocation;
@@ -45,6 +46,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->console = new ConsoleTester($this->container);
 
         // Database
+        $this->container->addInitializer(CachedConnectionInitializer::class);
         $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.config.php';
 
         if (! file_exists($databaseConfigPath)) {

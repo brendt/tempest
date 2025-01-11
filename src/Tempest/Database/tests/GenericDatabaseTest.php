@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Database\Tests;
 
 use Exception;
-use PDO;
 use PHPUnit\Framework\TestCase;
+use Tempest\Database\Connection;
 use Tempest\Database\GenericDatabase;
 use Tempest\Database\Transactions\GenericTransactionManager;
 
@@ -17,19 +17,19 @@ final class GenericDatabaseTest extends TestCase
 {
     public function test_it_executes_transactions(): void
     {
-        $pdo = $this->createMock(PDO::class);
-        $pdo->expects($this->once())
+        $connection = $this->createMock(Connection::class);
+        $connection->expects($this->once())
             ->method('beginTransaction')
             ->withAnyParameters()
             ->willReturn(true);
-        $pdo->expects($this->once())
+        $connection->expects($this->once())
             ->method('commit')
             ->withAnyParameters()
             ->willReturn(true);
 
         $database = new GenericDatabase(
-            $pdo,
-            new GenericTransactionManager($pdo),
+            $connection,
+            new GenericTransactionManager($connection),
         );
 
         $result = $database->withinTransaction(function () {
@@ -41,19 +41,19 @@ final class GenericDatabaseTest extends TestCase
 
     public function test_it_rolls_back_transactions_on_failure(): void
     {
-        $pdo = $this->createMock(PDO::class);
-        $pdo->expects($this->once())
+        $connection = $this->createMock(Connection::class);
+        $connection->expects($this->once())
             ->method('beginTransaction')
             ->withAnyParameters()
             ->willReturn(true);
-        $pdo->expects($this->once())
+        $connection->expects($this->once())
             ->method('rollback')
             ->withAnyParameters()
             ->willReturn(true);
 
         $database = new GenericDatabase(
-            $pdo,
-            new GenericTransactionManager($pdo),
+            $connection,
+            new GenericTransactionManager($connection),
         );
 
         $result = $database->withinTransaction(function (): never {

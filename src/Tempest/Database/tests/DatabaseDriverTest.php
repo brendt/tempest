@@ -8,10 +8,10 @@ use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Tempest\Database\Connections\DatabaseConnection;
 use Tempest\Database\Connections\MySqlConnection;
 use Tempest\Database\Connections\PostgresConnection;
 use Tempest\Database\Connections\SQLiteConnection;
-use Tempest\Database\DatabaseConnection;
 
 /**
  * @internal

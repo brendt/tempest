@@ -20,6 +20,8 @@ use Whoops\Run;
 
 final class Kernel
 {
+    public const VERSION = '1.0.0-alpha.3';
+
     public readonly Container $container;
 
     public bool $discoveryCache;

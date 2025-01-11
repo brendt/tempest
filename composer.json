@@ -164,6 +164,10 @@
         "phpstan": "vendor/bin/phpstan analyse src tests --memory-limit=1G",
         "rector": "vendor/bin/rector process --no-ansi",
         "merge": "vendor/bin/monorepo-builder merge",
+        "release": [
+            "composer qa",
+            "./bin/release"
+        ],
         "qa": [
             "composer merge",
             "./bin/validate-packages",

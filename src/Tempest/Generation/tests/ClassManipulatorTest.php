@@ -6,10 +6,12 @@ namespace Tempest\Generation\Tests;
 
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Generation\ClassManipulator;
+use Tempest\Generation\Tests\Fixtures\ClassWithDummyStringToBeReplacedByFqcn;
 use Tempest\Generation\Tests\Fixtures\ClassWithMethodParameterAttributes;
 use Tempest\Generation\Tests\Fixtures\ClassWithTraitInAnotherNamespace;
 use Tempest\Generation\Tests\Fixtures\CreateMigrationsTable;
 use Tempest\Generation\Tests\Fixtures\Database\MigrationModel;
+use Tempest\Generation\Tests\Fixtures\SampleNamespace\DummyFqcn;
 use Tempest\Generation\Tests\Fixtures\TestAttribute;
 use Tempest\Generation\Tests\Fixtures\WelcomeController;
 use Tempest\Support\StringHelper;
@@ -176,6 +178,15 @@ final class ClassManipulatorTest extends TestCase
     public function simplifies_method_parameter_attributes(): void
     {
         $class = new ClassManipulator(ClassWithMethodParameterAttributes::class);
+
+        $this->assertMatchesSnapshot($class->print());
+    }
+
+    #[Test]
+    public function make_replacements_before_converting_fqcn(): void
+    {
+        $class = new ClassManipulator(ClassWithDummyStringToBeReplacedByFqcn::class);
+        $class->manipulate(fn (StringHelper $string) => $string->replace("'fqcn-to-be-replaced'", sprintf('%s::class', DummyFqcn::class)));
 
         $this->assertMatchesSnapshot($class->print());
     }

@@ -1,3 +1,6 @@
+# Use LF line endings
+* text eol=lf
+
 # Exclude build/test files from the release
 /bin/                     export-ignore
 .github/                  export-ignore

@@ -43,7 +43,7 @@ final readonly class TailServerLogCommand
 
         $this->console->writeln("Listening at {$serverLogPath}");
 
-        (new TailReader())->tail(
+        new TailReader()->tail(
             path: $serverLogPath,
             format: fn (string $text) => $this->highlighter->parse(
                 $text,

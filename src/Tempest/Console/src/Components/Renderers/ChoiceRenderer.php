@@ -40,7 +40,7 @@ final class ChoiceRenderer
                     : $options->getActive()?->value,
             )->newLine();
         } elseif ($state === ComponentState::CANCELLED) {
-            if ($query->text ?: $this->default) {
+            if ($query->text || $this->default) {
                 $this->line($this->style('fg-gray italic strikethrough', $query->text ?: $this->default))->newLine();
             }
         } else {

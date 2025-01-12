@@ -83,7 +83,7 @@ final readonly class PathHelper implements Stringable
     public function glob(string $pattern): ArrayHelper
     {
         return arr(
-            glob((new self($this->path, $pattern))->toString()),
+            glob(new self($this->path, $pattern)->toString()),
         );
     }
 

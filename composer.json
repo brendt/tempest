@@ -44,6 +44,7 @@
         "jenssegers/blade": "^2.0",
         "mikey179/vfsstream": "^2.0@dev",
         "nyholm/psr7": "^1.8",
+        "phpat/phpat": "^0.11.0",
         "phpbench/phpbench": "84.x-dev",
         "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^11.3.5",
@@ -51,8 +52,7 @@
         "spatie/phpunit-snapshot-assertions": "^5.1.6",
         "spaze/phpstan-disallowed-calls": "^4.0",
         "symplify/monorepo-builder": "^11.2",
-        "twig/twig": "^3.16",
-        "phpat/phpat": "^0.11.0"
+        "twig/twig": "^3.16"
     },
     "replace": {
         "tempest/auth": "self.version",

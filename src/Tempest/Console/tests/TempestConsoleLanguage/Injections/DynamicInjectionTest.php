@@ -35,7 +35,7 @@ final class DynamicInjectionTest extends TestCase
 
         $this->assertSame(
             $expected,
-            (new DynamicInjection())->parse($content, $highlighter)->content,
+            new DynamicInjection()->parse($content, $highlighter)->content,
         );
     }
 }

@@ -25,7 +25,7 @@ final class TestResponseHelper
         get => $this->response->status;
     }
 
-    /** @var \Tempest\Router\Header[] $headers */
+    /** @var \Tempest\Router\Header[] */
     public array $headers {
         get => $this->response->headers;
     }

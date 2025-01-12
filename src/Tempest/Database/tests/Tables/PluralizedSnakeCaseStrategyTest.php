@@ -27,6 +27,6 @@ final class PluralizedSnakeCaseStrategyTest extends TestCase
 
         GenericContainer::setInstance($container);
 
-        $this->assertSame($expected, (new PluralizedSnakeCaseStrategy())->getName($actual));
+        $this->assertSame($expected, new PluralizedSnakeCaseStrategy()->getName($actual));
     }
 }

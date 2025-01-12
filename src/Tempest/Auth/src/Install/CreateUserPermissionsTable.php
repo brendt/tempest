@@ -16,7 +16,7 @@ final class CreateUserPermissionsTable implements DatabaseMigration
 
     public function up(): CreateTableStatement
     {
-        return (new CreateTableStatement('user_permissions'))
+        return new CreateTableStatement('user_permissions')
             ->primary()
             ->belongsTo('user_permissions.user_id', 'users.id')
             ->belongsTo('user_permissions.permission_id', 'permissions.id');

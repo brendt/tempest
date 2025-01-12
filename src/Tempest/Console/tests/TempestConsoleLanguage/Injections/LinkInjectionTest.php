@@ -27,7 +27,7 @@ final class LinkInjectionTest extends TestCase
 
         $this->assertSame(
             $expected,
-            (new LinkInjection())->parse($content, $highlighter)->content,
+            new LinkInjection()->parse($content, $highlighter)->content,
         );
     }
 }

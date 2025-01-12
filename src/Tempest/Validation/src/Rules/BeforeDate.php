@@ -25,7 +25,7 @@ final readonly class BeforeDate implements Rule
 
     public function isValid(mixed $value): bool
     {
-        return ! (new AfterDate($this->date, $this->inclusive))->isValid($value);
+        return ! new AfterDate($this->date, $this->inclusive)->isValid($value);
     }
 
     public function message(): string

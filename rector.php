@@ -6,7 +6,6 @@ use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
 use Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector;
 use Rector\Config\RectorConfig;
-use Rector\DeadCode\Rector\ClassMethod\RemoveUnusedPublicMethodParameterRector;
 use Rector\DeadCode\Rector\PropertyProperty\RemoveNullPropertyInitializationRector;
 use Rector\Php70\Rector\StaticCall\StaticCallOnNonStaticToInstanceCallRector;
 use Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector;
@@ -51,7 +50,6 @@ return RectorConfig::configure()
         ReadOnlyPropertyRector::class,
         RemoveNullPropertyInitializationRector::class,
         AddSensitiveParameterAttributeRector::class,
-        RemoveUnusedPublicMethodParameterRector::class,
         RestoreDefaultNullToNullableTypePropertyRector::class,
         ReturnNeverTypeRector::class,
         StaticCallOnNonStaticToInstanceCallRector::class,

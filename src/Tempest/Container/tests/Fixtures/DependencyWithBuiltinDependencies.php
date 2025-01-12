@@ -6,15 +6,15 @@ namespace Tempest\Container\Tests\Fixtures;
 
 use Tempest\Container\Tag;
 
-final class DependencyWithBuiltinDependencies
+final readonly class DependencyWithBuiltinDependencies
 {
     public function __construct(
         #[Tag('builtin-dependency-array')]
-        public readonly array $arrayValue,
+        public array $arrayValue,
         #[Tag('builtin-dependency-string')]
-        public readonly string $stringValue,
+        public string $stringValue,
         #[Tag('builtin-dependency-bool')]
-        public readonly bool $boolValue,
+        public bool $boolValue,
     ) {
     }
 }

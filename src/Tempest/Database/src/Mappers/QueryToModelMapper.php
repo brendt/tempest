@@ -146,7 +146,7 @@ final readonly class QueryToModelMapper implements Mapper
             $property->getType()->asClass()->newInstanceWithoutConstructor(),
         );
 
-        $childProperty = (new ClassReflector($childModel))->getProperty($childProperty);
+        $childProperty = new ClassReflector($childModel)->getProperty($childProperty);
 
         // TODO: must pass through the mapper
         $this->parseProperty(
@@ -177,7 +177,7 @@ final readonly class QueryToModelMapper implements Mapper
 
         $childModel = $collection[$childId] ?? $property->getIterableType()->asClass()->newInstanceWithoutConstructor();
 
-        $childProperty = (new ClassReflector($childModel))->getProperty($childProperty);
+        $childProperty = new ClassReflector($childModel)->getProperty($childProperty);
 
         // TODO: must pass through the mapper
         $this->parseProperty(

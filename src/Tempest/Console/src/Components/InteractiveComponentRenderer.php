@@ -205,7 +205,7 @@ final class InteractiveComponentRenderer
 
         $inputHandlers = [];
 
-        foreach ((new ClassReflector($component))->getPublicMethods() as $method) {
+        foreach (new ClassReflector($component)->getPublicMethods() as $method) {
             foreach ($method->getAttributes(HandlesKey::class) as $handlesKey) {
                 if ($handlesKey->key === null) {
                     $inputHandlers[] = $method;
@@ -251,6 +251,7 @@ final class InteractiveComponentRenderer
     {
         $terminal = new Terminal($console);
         $terminal->switchToInteractiveMode();
+
         $terminal->cursor->clearAfter();
         stream_set_blocking(STDIN, false);
 

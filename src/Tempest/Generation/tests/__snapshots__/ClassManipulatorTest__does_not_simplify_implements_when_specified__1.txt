@@ -16,7 +16,7 @@ final readonly class CreateMigrationsTable implements Database\FakeMigration
 
     public function up(): FakeQueryStatement
     {
-        return (new FakeCreateTableStatement(MigrationModel::table()))
+        return new FakeCreateTableStatement(MigrationModel::table())
             ->primary()
             ->text('name');
     }

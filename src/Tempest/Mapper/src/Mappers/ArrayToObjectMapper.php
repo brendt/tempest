@@ -122,7 +122,7 @@ final readonly class ArrayToObjectMapper implements Mapper
             return $objectOrClass;
         }
 
-        return (new ClassReflector($objectOrClass))->newInstanceWithoutConstructor();
+        return new ClassReflector($objectOrClass)->newInstanceWithoutConstructor();
     }
 
     private function resolveValueFromType(

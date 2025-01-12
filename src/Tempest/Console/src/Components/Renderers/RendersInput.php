@@ -11,11 +11,11 @@ use Tempest\Support\StringHelper;
 
 trait RendersInput
 {
-    public const MARGIN_X = 2;
+    public const int MARGIN_X = 2;
 
-    public const PADDING_X = 1;
+    public const int PADDING_X = 1;
 
-    public const MARGIN_TOP = 1;
+    public const int MARGIN_TOP = 1;
 
     private StringHelper $frame;
 
@@ -62,7 +62,7 @@ trait RendersInput
             return '';
         }
 
-        return (new StringHelper($string))
+        return new StringHelper($string)
             ->truncate($this->maxLineCharacters - 1 - $maxLineOffset, end: '…') // -1 is for the ellipsis
             ->toString();
     }

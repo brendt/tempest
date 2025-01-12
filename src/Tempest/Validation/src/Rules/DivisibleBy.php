@@ -21,7 +21,7 @@ final readonly class DivisibleBy implements Rule
             return false;
         }
 
-        return (new MultipleOf($this->divisor))->isValid($value);
+        return new MultipleOf($this->divisor)->isValid($value);
     }
 
     public function message(): string

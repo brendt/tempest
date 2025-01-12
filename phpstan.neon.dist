@@ -19,6 +19,8 @@ parameters:
 		- tests
 	ignoreErrors:
 		-
+			identifier: assign.propertyReadOnly
+		-
 			identifier: argument.named
 		-
 			message: '#.*#'

@@ -77,8 +77,7 @@ trait IsElement
     {
         $name = ltrim($name, ':');
 
-        unset($this->attributes[$name]);
-        unset($this->attributes[":{$name}"]);
+        unset($this->attributes[$name], $this->attributes[":{$name}"]);
 
         return $this;
     }

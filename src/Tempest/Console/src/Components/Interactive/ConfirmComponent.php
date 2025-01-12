@@ -28,7 +28,6 @@ final class ConfirmComponent implements InteractiveConsoleComponent, HasStaticCo
 
     public function __construct(
         private readonly string $question,
-        /** @phpstan-ignore-next-line https://github.com/phpstan/phpstan/issues/12255 */
         private readonly bool $default = false,
         readonly ?string $yes = null,
         readonly ?string $no = null,

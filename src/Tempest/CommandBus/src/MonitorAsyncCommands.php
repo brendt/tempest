@@ -55,7 +55,7 @@ final readonly class MonitorAsyncCommands
             }
 
             $availableCommands = arr($this->repository->getPendingCommands())
-                ->filter(fn (object $command, string $uuid) => ! in_array($uuid, array_keys($processes)));
+                ->filter(fn (object $command, string $uuid) => ! array_key_exists($uuid, $processes));
 
             if (count($processes) === 5) {
                 $this->sleep(0.5);

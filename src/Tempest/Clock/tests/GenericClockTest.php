@@ -47,7 +47,7 @@ final class GenericClockTest extends TestCase
     {
         $timeBefore = time();
 
-        (new GenericClock())->sleep(1);
+        new GenericClock()->sleep(1);
 
         $timeAfter = time();
 

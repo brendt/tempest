@@ -31,7 +31,7 @@ function getCurrentVersion(): string
 
 function normalizeVersion(string $version): string
 {
-    return preg_replace('/^(\d+\.\d+\.\d+)\.0(-|$|\+)/', '$1$2', (new VersionParser())->normalize($version));
+    return preg_replace('/^(\d+\.\d+\.\d+)\.0(-|$|\+)/', '$1$2', new VersionParser()->normalize($version));
 }
 
 function suggestNextVersions(string $current): array

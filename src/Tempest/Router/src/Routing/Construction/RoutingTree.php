@@ -37,6 +37,6 @@ final class RoutingTree
     /** @return array<string, MatchingRegex> */
     public function toMatchingRegexes(): array
     {
-        return array_map(static fn (RouteTreeNode $node) => (new RouteMatchingRegexBuilder($node))->toRegex(), $this->roots);
+        return array_map(static fn (RouteTreeNode $node) => new RouteMatchingRegexBuilder($node)->toRegex(), $this->roots);
     }
 }

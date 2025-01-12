@@ -93,6 +93,7 @@ return (new PhpCsFixer\Config())
             'on_multiline' => 'ensure_fully_multiline',
             'keep_multiple_spaces_after_comma' => true,
         ],
+        'type_declaration_spaces' => true,
         'single_trait_insert_per_statement' => true,
         'declare_strict_types' => true,
         'no_empty_comment' => true,

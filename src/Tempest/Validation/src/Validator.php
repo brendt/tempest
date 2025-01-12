@@ -70,10 +70,10 @@ final readonly class Validator
             default => [true, ''],
         };
 
-        return new class ($isValid, $message) implements Rule {
+        return new readonly class ($isValid, $message) implements Rule {
             public function __construct(
-                private readonly bool $isValid,
-                private readonly string $message,
+                private bool $isValid,
+                private string $message,
             ) {
             }
 

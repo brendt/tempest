@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Enums;
 
+use BackedEnum;
 use Tempest\Support\ArrayHelper;
-
 use function Tempest\Support\arr;
 
 /**
@@ -19,7 +19,8 @@ trait HelperMethods
      *
      * @return array<int, string>
      */
-    public static function names(): array {
+    public static function names(): array
+    {
         return array_column(static::cases(), 'name');
     }
 
@@ -29,8 +30,9 @@ trait HelperMethods
      *
      * @return array<int, string>
      */
-    public static function values(): array {
-        return is_subclass_of(static::class, \BackedEnum::class)
+    public static function values(): array
+    {
+        return is_subclass_of(static::class, BackedEnum::class)
             ? array_column(static::cases(), 'value')
             : array_column(static::cases(), 'name');
     }
@@ -40,7 +42,8 @@ trait HelperMethods
      *
      * @return ArrayHelper<static>
      */
-    public static function collect(): ArrayHelper {
+    public static function collect(): ArrayHelper
+    {
         return arr(static::cases());
     }
 
@@ -50,8 +53,9 @@ trait HelperMethods
      *
      * @return array<int|string, string>
      */
-    public static function options(): array {
-        return is_subclass_of(static::class, \BackedEnum::class)
+    public static function options(): array
+    {
+        return is_subclass_of(static::class, BackedEnum::class)
             ? array_column(static::cases(), 'value', 'name')
             : self::values();
     }

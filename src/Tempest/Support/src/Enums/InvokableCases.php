@@ -6,7 +6,7 @@ namespace Tempest\Support\Enums;
 
 use BackedEnum;
 use InvalidArgumentException;
-
+use UnitEnum;
 use function Tempest\Support\arr;
 
 /**
@@ -26,18 +26,19 @@ trait InvokableCases
 
     /**
      * Returns the enum's value when it's called statically
-     * 
+     *
      * @param string $name The enum case
      * @param array $arguments The arguments
-     * 
+     *
      * @example SampleStatusBackedEnum::PUBLISH()
      * @example SampleStatusPureEnum::PUBLISH()
      */
-    public static function __callStatic( string $name, array $arguments ): string {
-        $case = arr(static::cases())->first(fn(\UnitEnum $case) => $name === $case->name);
+    public static function __callStatic(string $name, array $arguments): string
+    {
+        $case = arr(static::cases())->first(fn (UnitEnum $case) => $name === $case->name);
 
-        if ( is_null( $case ) ) {
-            throw new InvalidArgumentException(sprintf( 'Call to undefined enum case or method "%s::%s"', static::class, $name ));
+        if (is_null($case)) {
+            throw new InvalidArgumentException(sprintf('Call to undefined enum case or method "%s::%s"', static::class, $name));
         }
 
         return $case();

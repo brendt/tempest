@@ -18,6 +18,6 @@ final class PascalCaseStrategyTest extends TestCase
     #[TestWith(['App\\Models\\PersonalAccessToken', 'PersonalAccessToken'])]
     public function test_strategy(string $actual, string $expected): void
     {
-        $this->assertSame($expected, (new PascalCaseStrategy())->getName($actual));
+        $this->assertSame($expected, new PascalCaseStrategy()->getName($actual));
     }
 }

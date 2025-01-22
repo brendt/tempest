@@ -48,7 +48,7 @@ trait RendersControls
 
         if ($render->stripTags()->length() >= $maxWidth) {
             $prefix = $marginLeft . '<style="fg-gray">·</style>';
-            $render = (new StringHelper($prefix))
+            $render = new StringHelper($prefix)
                 ->append($render)
                 ->explode($separator)
                 ->implode("\n" . $prefix . $marginLeft);

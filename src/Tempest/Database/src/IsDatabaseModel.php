@@ -95,7 +95,7 @@ trait IsDatabaseModel
     {
         $new = self::find($this->getId(), $relations);
 
-        foreach ((new ClassReflector($new))->getPublicProperties() as $property) {
+        foreach (new ClassReflector($new)->getPublicProperties() as $property) {
             $property->setValue($this, $property->getValue($new));
         }
 

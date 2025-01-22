@@ -8,10 +8,10 @@ use Tempest\Support\HtmlString;
 use Tempest\Vite\Manifest\Chunk;
 use Tempest\Vite\ViteConfig;
 
-final class GenericTagCompiler implements TagCompiler
+final readonly class GenericTagCompiler implements TagCompiler
 {
     public function __construct(
-        private readonly ViteConfig $viteConfig,
+        private ViteConfig $viteConfig,
     ) {
     }
 

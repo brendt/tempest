@@ -11,6 +11,6 @@ namespace Tempest {
      */
     function view(string $path, mixed ...$params): View
     {
-        return (new GenericView($path))->data(...$params);
+        return new GenericView($path)->data(...$params);
     }
 }

@@ -2,7 +2,7 @@
 <?php
 
 use Tempest\Console\ConsoleApplication;
-use Tempest\Core\DiscoveryLocation;
+use Tempest\Discovery\DiscoveryLocation;
 
 require_once getcwd() . '/vendor/autoload.php';
 

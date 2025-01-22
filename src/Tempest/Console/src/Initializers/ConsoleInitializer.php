@@ -46,12 +46,12 @@ final class ConsoleInitializer implements Initializer
 
     public function cliConsole(Container $container): GenericConsole
     {
-        return (new GenericConsole(
+        return new GenericConsole(
             output: $container->get(StdoutOutputBuffer::class),
             input: $container->get(StdinInputBuffer::class),
             highlighter: $container->get(Highlighter::class, tag: 'console'),
             executeConsoleCommand: $container->get(ExecuteConsoleCommand::class),
             argumentBag: $container->get(ConsoleArgumentBag::class),
-        ))->setComponentRenderer($container->get(InteractiveComponentRenderer::class));
+        )->setComponentRenderer($container->get(InteractiveComponentRenderer::class));
     }
 }

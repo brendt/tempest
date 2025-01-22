@@ -14,7 +14,7 @@ use Tempest\Support\StringHelper;
  */
 final class HtmlStringTest extends TestCase
 {
-    public function test_convertions(): void
+    public function test_conversions(): void
     {
         $this->assertInstanceOf(HtmlString::class, HtmlString::createTag('div'));
         $this->assertInstanceOf(Stringable::class, HtmlString::createTag('div'));

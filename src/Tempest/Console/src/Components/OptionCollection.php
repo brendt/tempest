@@ -163,7 +163,7 @@ final class OptionCollection implements Iterator, Countable
         return $this->getActive();
     }
 
-    public function key(): mixed
+    public function key(): int
     {
         return $this->activeOption;
     }

@@ -24,7 +24,7 @@ final readonly class DataAttribute implements Attribute
 
         // Render {{ and {!! tags
         if ($value->startsWith(['{{', '{!!']) && $value->endsWith(['}}', '!!}'])) {
-            $value = (new TextElement($value->toString()))->compile();
+            $value = new TextElement($value->toString())->compile();
             $element->setAttribute($this->name, $value);
         }
 

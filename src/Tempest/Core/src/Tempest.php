@@ -10,7 +10,7 @@ final readonly class Tempest
 {
     public static function boot(
         ?string $root = null,
-        /** @var \Tempest\Core\DiscoveryLocation[] $discoveryLocations */
+        /** @var \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
         array $discoveryLocations = [],
     ): Container {
         $root ??= getcwd();

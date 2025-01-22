@@ -54,7 +54,7 @@ final class StubFileGenerator
             // Transform stub to class
             $namespace = NamespaceHelper::toMainNamespace($targetPath);
             $classname = NamespaceHelper::toClassName($targetPath);
-            $classManipulator = (new ClassManipulator($stubFile->filePath))
+            $classManipulator = new ClassManipulator($stubFile->filePath)
                 ->setNamespace($namespace)
                 ->setClassName($classname);
 

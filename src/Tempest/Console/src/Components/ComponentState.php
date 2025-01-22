@@ -30,4 +30,12 @@ enum ComponentState
      * Input is blocked.
      */
     case BLOCKED;
+
+    public function isFinished(): bool
+    {
+        return match ($this) {
+            self::ACTIVE, self::ERROR, self::BLOCKED => false,
+            default => true,
+        };
+    }
 }

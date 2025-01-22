@@ -95,23 +95,11 @@ final readonly class TypeReflector implements Reflector
         }
 
         if (str_contains($this->definition, '|')) {
-            foreach ($this->split() as $type) {
-                if ($type->accepts($input)) {
-                    return true;
-                }
-            }
-
-            return false;
+            return array_any($this->split(), static fn ($type) => $type->accepts($input));
         }
 
         if (str_contains($this->definition, '&')) {
-            foreach ($this->split() as $type) {
-                if (! $type->accepts($input)) {
-                    return false;
-                }
-            }
-
-            return true;
+            return array_all($this->split(), static fn ($type) => $type->accepts($input));
         }
 
         return false;

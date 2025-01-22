@@ -24,7 +24,7 @@ final readonly class BelongsToStatement implements QueryStatement
 
         return match ($dialect) {
             DatabaseDialect::MYSQL,
-            DatabaseDialect::POSTGRESQL => (new ConstraintStatement(
+            DatabaseDialect::POSTGRESQL => new ConstraintStatement(
                 sprintf(
                     'fk_%s_%s_%s',
                     strtolower($foreignTable),
@@ -42,7 +42,7 @@ final readonly class BelongsToStatement implements QueryStatement
                         'ON UPDATE ' . $this->onUpdate->value,
                     ),
                 ),
-            ))->compile($dialect),
+            )->compile($dialect),
             DatabaseDialect::SQLITE => '',
         };
     }

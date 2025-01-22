@@ -56,7 +56,7 @@ final readonly class TailProjectLogCommand
 
         $this->console->writeln("Listening at {$appendLogChannel->getPath()}");
 
-        (new TailReader())->tail(
+        new TailReader()->tail(
             path: $appendLogChannel->getPath(),
             format: fn (string $text) => $this->highlighter->parse(
                 $text,

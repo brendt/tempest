@@ -17,7 +17,7 @@ trait IsIterable
         next($this->array);
     }
 
-    public function key(): mixed
+    public function key(): string|int|null
     {
         return key($this->array);
     }

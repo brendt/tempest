@@ -81,7 +81,7 @@ final class ContainerTest extends TestCase
 
     public function test_get_with_initializer(): void
     {
-        $container = (new GenericContainer())->setInitializers([
+        $container = new GenericContainer()->setInitializers([
             ContainerObjectD::class => ContainerObjectDInitializer::class,
         ]);
 

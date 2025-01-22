@@ -64,13 +64,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             return $search === false ? null : $search; // Keep empty values but convert false to null
         }
 
-        foreach ($this->array as $key => $item) {
-            if ($value($item, $key) === true) {
-                return $key;
-            }
-        }
-
-        return null;
+        return array_find_key($this->array, static fn ($item, $key) => $value($item, $key) === true);
     }
 
     /**
@@ -138,7 +132,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      */
     public function shuffle(): self
     {
-        return new self((new Randomizer())->shuffleArray($this->array));
+        return new self(new Randomizer()->shuffleArray($this->array));
     }
 
     /**
@@ -198,14 +192,14 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         $count = count($this->array);
 
         if ($number > $count) {
-            throw new InvalidArgumentException("Cannot retrive {$number} items from an array of {$count} items.");
+            throw new InvalidArgumentException("Cannot retrieve {$number} items from an array of {$count} items.");
         }
 
         if ($number < 1) {
             throw new InvalidArgumentException("Random value only accepts positive integers, {$number} requested.");
         }
 
-        $keys = (new Randomizer())->pickArrayKeys($this->array, $number);
+        $keys = new Randomizer()->pickArrayKeys($this->array, $number);
 
         $randomValues = [];
         foreach ($keys as $key) {
@@ -503,13 +497,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             return $this->array[array_key_first($this->array)];
         }
 
-        foreach ($this as $key => $value) {
-            if ($filter($value, $key)) {
-                return $value;
-            }
-        }
-
-        return null;
+        return array_find($this->array, static fn ($value, $key) => $filter($value, $key));
     }
 
     /**
@@ -530,13 +518,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             return $this->array[array_key_last($this->array)];
         }
 
-        foreach ($this->reverse() as $key => $value) {
-            if ($filter($value, $key)) {
-                return $value;
-            }
-        }
-
-        return null;
+        return array_find($this->reverse()->toArray(), static fn ($value, $key) => $filter($value, $key));
     }
 
     /**
@@ -777,13 +759,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     {
         $callback ??= static fn (mixed $value) => ! is_null($value);
 
-        foreach ($this->array as $key => $value) {
-            if (! $callback($value, $key)) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($this->array, static fn (mixed $value, int|string $key) => $callback($value, $key));
     }
 
     /**
@@ -854,11 +830,13 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             return $value;
         };
 
-        $array = [];
+        $unwrapped = [];
 
         foreach ($this->array as $key => $value) {
-            $array = array_merge_recursive($array, $unwrapValue($key, $value));
+            $unwrapped[] = $unwrapValue($key, $value);
         }
+
+        $array = array_merge_recursive(...$unwrapped);
 
         return new self($array);
     }
@@ -1073,6 +1051,6 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
 
     public static function wrap(mixed $input = []): array
     {
-        return (new self($input))->toArray();
+        return new self($input)->toArray();
     }
 }

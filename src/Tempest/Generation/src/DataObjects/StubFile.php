@@ -13,11 +13,11 @@ use Tempest\Generation\Enums\StubFileType;
 /**
  * Represents a file that is to be generated.
  */
-final class StubFile
+final readonly class StubFile
 {
     public function __construct(
-        public readonly string $filePath,
-        public readonly StubFileType $type,
+        public string $filePath,
+        public StubFileType $type,
     ) {
     }
 

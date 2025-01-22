@@ -17,7 +17,7 @@ final readonly class ShowTablesStatement implements QueryStatement
 
     public function fetch(DatabaseDialect $dialect): array
     {
-        return (new Query($this->compile($dialect)))->fetch();
+        return new Query($this->compile($dialect))->fetch();
     }
 
     public function compile(DatabaseDialect $dialect): string

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Tests\Fixtures\Database;
 
-final class FakeCreateTableStatement implements FakeQueryStatement
+final readonly class FakeCreateTableStatement implements FakeQueryStatement
 {
     public function __construct(
-        public readonly string $tableName,
+        public string $tableName,
     ) {
     }
 

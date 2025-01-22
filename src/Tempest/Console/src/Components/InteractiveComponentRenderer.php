@@ -16,6 +16,7 @@ use Tempest\Reflection\MethodReflector;
 use Tempest\Validation\Exceptions\InvalidValueException;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Validator;
+use function Tempest\Support\arr;
 
 final class InteractiveComponentRenderer
 {
@@ -101,7 +102,7 @@ final class InteractiveComponentRenderer
             $handlersForKey = $keyBindings[$key] ?? [];
 
             // If we have multiple handlers, we put the ones that return nothing
-            // first because the ones that return something will be overriden otherwise.
+            // first because the ones that return something will be overridden otherwise.
             usort($handlersForKey, fn (MethodReflector $a, MethodReflector $b) => $b->getReturnType()->equals('void') <=> $a->getReturnType()->equals('void'));
 
             // CTRL+C and CTRL+D means we exit the CLI, but only if there is no custom
@@ -153,6 +154,8 @@ final class InteractiveComponentRenderer
                 continue;
             }
 
+            Fiber::suspend();
+
             // If valid, we can return
             return $return;
         }
@@ -202,7 +205,7 @@ final class InteractiveComponentRenderer
 
         $inputHandlers = [];
 
-        foreach ((new ClassReflector($component))->getPublicMethods() as $method) {
+        foreach (new ClassReflector($component)->getPublicMethods() as $method) {
             foreach ($method->getAttributes(HandlesKey::class) as $handlesKey) {
                 if ($handlesKey->key === null) {
                     $inputHandlers[] = $method;
@@ -231,9 +234,24 @@ final class InteractiveComponentRenderer
         return null;
     }
 
+    public function isComponentSupported(Console $console, InteractiveConsoleComponent $component): bool
+    {
+        if (! arr($component->extensions ?? [])->every(fn (string $ext) => extension_loaded($ext))) {
+            return false;
+        }
+
+        if (! new Terminal($console)->supportsTty()) {
+            return false;
+        }
+
+        return true;
+    }
+
     private function createTerminal(Console $console): Terminal
     {
         $terminal = new Terminal($console);
+        $terminal->switchToInteractiveMode();
+
         $terminal->cursor->clearAfter();
         stream_set_blocking(STDIN, false);
 

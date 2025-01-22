@@ -38,8 +38,7 @@ trait IsRequest
         array $body = [],
         array $headers = [],
         array $files = [],
-    )
-    {
+    ) {
         $this->method = $method;
         $this->uri = $uri;
         $this->body = $body;
@@ -109,7 +108,7 @@ trait IsRequest
             return true;
         }
 
-        return (bool)$this->hasQuery($key);
+        return $this->hasQuery($key);
     }
 
     public function hasBody(string $key): bool

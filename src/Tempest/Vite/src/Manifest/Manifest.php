@@ -7,19 +7,19 @@ namespace Tempest\Vite\Manifest;
 use Tempest\Support\ArrayHelper;
 use function Tempest\Support\arr;
 
-final class Manifest
+final readonly class Manifest
 {
     private function __construct(
         /**
          * All chunks in the manifest.
          * @var ArrayHelper<int,Chunk>
          */
-        public readonly ArrayHelper $chunks,
+        public ArrayHelper $chunks,
         /**
          * Chunks that are entrypoints.
          * @var ArrayHelper<int,Chunk>
          */
-        public readonly ArrayHelper $entrypoints,
+        public ArrayHelper $entrypoints,
     ) {
     }
 

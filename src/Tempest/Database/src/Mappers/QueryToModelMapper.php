@@ -122,7 +122,9 @@ final readonly class QueryToModelMapper implements Mapper
 
     private function parseProperty(PropertyReflector $property, DatabaseModel $model, mixed $value): DatabaseModel
     {
-        if ($value && ($caster = $this->casterFactory->forProperty($property)) !== null) {
+        $caster = $this->casterFactory->forProperty($property);
+
+        if ($value && $caster !== null) {
             $value = $caster->cast($value);
         }
 
@@ -146,7 +148,7 @@ final readonly class QueryToModelMapper implements Mapper
             $property->getType()->asClass()->newInstanceWithoutConstructor(),
         );
 
-        $childProperty = (new ClassReflector($childModel))->getProperty($childProperty);
+        $childProperty = new ClassReflector($childModel)->getProperty($childProperty);
 
         // TODO: must pass through the mapper
         $this->parseProperty(
@@ -177,7 +179,7 @@ final readonly class QueryToModelMapper implements Mapper
 
         $childModel = $collection[$childId] ?? $property->getIterableType()->asClass()->newInstanceWithoutConstructor();
 
-        $childProperty = (new ClassReflector($childModel))->getProperty($childProperty);
+        $childProperty = new ClassReflector($childModel)->getProperty($childProperty);
 
         // TODO: must pass through the mapper
         $this->parseProperty(

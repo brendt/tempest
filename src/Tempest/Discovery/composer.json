@@ -1,0 +1,16 @@
+{
+    "name": "tempest/discovery",
+    "description": "Discover PHP classes and files",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.4",
+        "tempest/reflection": "dev-main"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Discovery\\": "src"
+        },
+        "files": []
+    }
+}

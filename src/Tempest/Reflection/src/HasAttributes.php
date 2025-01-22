@@ -24,11 +24,31 @@ trait HasAttributes
      * @param class-string<TAttributeClass> $attributeClass
      * @return TAttributeClass|null
      */
-    public function getAttribute(string $attributeClass): object|null
+    public function getAttribute(string $attributeClass, bool $recursive = false): object|null
     {
         $attribute = $this->getReflection()->getAttributes($attributeClass, PHPReflectionAttribute::IS_INSTANCEOF)[0] ?? null;
 
-        return $attribute?->newInstance();
+        $attributeInstance = $attribute?->newInstance();
+
+        if (! $recursive) {
+            return $attributeInstance;
+        }
+
+        if ($this instanceof ClassReflector) {
+            foreach ($this->getInterfaces() as $interface) {
+                $attributeInstance = $interface->asClass()->getAttribute($attributeClass);
+
+                if ($attributeInstance !== null) {
+                    break;
+                }
+            }
+
+            if ($attributeInstance === null && $parent = $this->getParent()) {
+                $attributeInstance = $parent->getAttribute($attributeClass, true);
+            }
+        }
+
+        return $attributeInstance;
     }
 
     /**

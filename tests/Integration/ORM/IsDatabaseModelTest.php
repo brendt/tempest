@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\ORM;
 
+use Carbon\Carbon;
 use Tempest\Database\Exceptions\MissingRelation;
 use Tempest\Database\Exceptions\MissingValue;
 use Tempest\Database\Id;
@@ -22,10 +23,12 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\ORM\Migrations\CreateATable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateBTable;
+use Tests\Tempest\Integration\ORM\Migrations\CreateCarbonModelTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateCTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyChildTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyParentTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyThroughTable;
+use Tests\Tempest\Integration\ORM\Models\CarbonModel;
 use Tests\Tempest\Integration\ORM\Models\ChildModel;
 use Tests\Tempest\Integration\ORM\Models\ParentModel;
 use Tests\Tempest\Integration\ORM\Models\ThroughModel;
@@ -436,5 +439,19 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $this->assertNull(Foo::find($foo->getId()));
         $this->assertNotNull(Foo::find($bar->getId()));
+    }
+
+    public function test_property_with_carbon_type(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateCarbonModelTable::class,
+        );
+
+        new CarbonModel(createdAt: new Carbon('2024-01-01'))->save();
+
+        $model = CarbonModel::query()->first();
+
+        $this->assertTrue($model->createdAt->equalTo(new Carbon('2024-01-01')));
     }
 }

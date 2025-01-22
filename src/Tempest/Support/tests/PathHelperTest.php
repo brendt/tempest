@@ -58,7 +58,7 @@ final class PathHelperTest extends TestCase
             'expected' => '/foo/bar/baz/qux/',
         ];
 
-        yield 'single foward slash' => [
+        yield 'single forward slash' => [
             'paths' => ['/'],
             'expected' => '/',
         ];

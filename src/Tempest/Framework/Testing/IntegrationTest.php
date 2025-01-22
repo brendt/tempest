@@ -22,7 +22,7 @@ abstract class IntegrationTest extends TestCase
 {
     protected string $root;
 
-    /** @var \Tempest\Core\DiscoveryLocation[] */
+    /** @var \Tempest\Discovery\DiscoveryLocation[] */
     protected array $discoveryLocations = [];
 
     protected AppConfig $appConfig;

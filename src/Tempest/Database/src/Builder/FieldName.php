@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\Builder;
 
 use Stringable;
+use Tempest\Database\DatabaseModel;
 use Tempest\Mapper\Casters\CasterFactory;
 use Tempest\Reflection\ClassReflector;
 
@@ -25,6 +26,11 @@ final class FieldName implements Stringable
         $tableName ??= $class->callStatic('table');
 
         foreach ($class->getPublicProperties() as $property) {
+            // Don't include the field if it's a relation
+            if ($property->getType()->matches(DatabaseModel::class)) {
+                continue;
+            }
+
             $caster = $casterFactory->forProperty($property);
 
             if ($caster !== null) {

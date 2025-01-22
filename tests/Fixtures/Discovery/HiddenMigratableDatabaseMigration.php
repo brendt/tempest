@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Discovery;
 
-use Tempest\Core\DoNotDiscover;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\MigrationDiscovery;
 use Tempest\Database\QueryStatement;
+use Tempest\Discovery\DoNotDiscover;
 
 #[DoNotDiscover(except: [MigrationDiscovery::class])]
 final class HiddenMigratableDatabaseMigration implements DatabaseMigration

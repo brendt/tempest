@@ -117,7 +117,7 @@ final readonly class StringHelper implements Stringable
         $string = preg_replace('/\s+/u', $delimiter, $string);
         $string = trim($string, $delimiter);
 
-        return (new self($string))->deduplicate($delimiter);
+        return new self($string)->deduplicate($delimiter);
     }
 
     /**
@@ -135,8 +135,7 @@ final readonly class StringHelper implements Stringable
     {
         $words = explode(' ', str_replace(['-', '_'], ' ', $this->string));
 
-        // TODO: use `mb_ucfirst` when it has landed in PHP 8.4
-        $studlyWords = array_map(static fn (string $word) => ucfirst($word), $words);
+        $studlyWords = array_map(mb_ucfirst(...), $words);
 
         return new self(implode('', $studlyWords));
     }
@@ -180,7 +179,7 @@ final readonly class StringHelper implements Stringable
 
         $lastWord = array_pop($parts);
 
-        $string = implode('', $parts) . (new self($lastWord))->pluralize($count);
+        $string = implode('', $parts) . new self($lastWord)->pluralize($count);
 
         return new self($string);
     }
@@ -410,13 +409,7 @@ final readonly class StringHelper implements Stringable
             $needles = [$needles];
         }
 
-        foreach ($needles as $needle) {
-            if (str_starts_with($this->string, (string) $needle)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($needles, fn ($needle) => str_starts_with($this->string, (string) $needle));
     }
 
     /**
@@ -428,17 +421,11 @@ final readonly class StringHelper implements Stringable
             $needles = [$needles];
         }
 
-        foreach ($needles as $needle) {
-            if (str_ends_with($this->string, (string) $needle)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($needles, fn ($needle) => str_ends_with($this->string, (string) $needle));
     }
 
     /**
-     * Replaces the first occurence of `$search` with `$replace`.
+     * Replaces the first occurrence of `$search` with `$replace`.
      */
     public function replaceFirst(Stringable|string $search, Stringable|string $replace): self
     {
@@ -458,7 +445,7 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
-     * Replaces the last occurence of `$search` with `$replace`.
+     * Replaces the last occurrence of `$search` with `$replace`.
      */
     public function replaceLast(Stringable|string $search, Stringable|string $replace): self
     {
@@ -580,11 +567,11 @@ final readonly class StringHelper implements Stringable
         }
 
         if (! $strict) {
-            return (new self($string))->after($before)->beforeLast($after);
+            return new self($string)->after($before)->beforeLast($after);
         }
 
         if ($this->startsWith($before) && $this->endsWith($after)) {
-            $string = (string) (new self($string))->after($before)->beforeLast($after);
+            $string = (string) new self($string)->after($before)->beforeLast($after);
         }
 
         return new self($string);

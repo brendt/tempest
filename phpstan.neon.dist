@@ -1,7 +1,12 @@
 includes:
 	- phpstan-baseline.neon
 	- vendor/spaze/phpstan-disallowed-calls/extension.neon
-
+	- vendor/phpat/phpat/extension.neon
+services:
+	-
+		class: Tests\Tempest\Architecture\ArchitectureTestCase
+		tags:
+			- phpat.test
 parameters:
 	level: 5
 	tmpDir: .cache/phpstan
@@ -13,6 +18,8 @@ parameters:
 		- src
 		- tests
 	ignoreErrors:
+		-
+			identifier: assign.propertyReadOnly
 		-
 			identifier: argument.named
 		-

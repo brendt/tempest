@@ -43,7 +43,9 @@
         "illuminate/view": "~11.7.0",
         "jenssegers/blade": "^2.0",
         "mikey179/vfsstream": "^2.0@dev",
+        "nesbot/carbon": "^3.8",
         "nyholm/psr7": "^1.8",
+        "phpat/phpat": "^0.11.0",
         "phpbench/phpbench": "84.x-dev",
         "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^11.3.5",
@@ -63,6 +65,7 @@
         "tempest/core": "self.version",
         "tempest/database": "self.version",
         "tempest/debug": "self.version",
+        "tempest/discovery": "self.version",
         "tempest/event-bus": "self.version",
         "tempest/filesystem": "self.version",
         "tempest/generation": "self.version",
@@ -77,6 +80,9 @@
         "tempest/view": "self.version",
         "tempest/vite": "self.version"
     },
+    "suggest": {
+        "ext-pcntl": "Required to use some interactive console components."
+    },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {
@@ -90,6 +96,7 @@
             "Tempest\\Core\\": "src/Tempest/Core/src",
             "Tempest\\Database\\": "src/Tempest/Database/src",
             "Tempest\\Debug\\": "src/Tempest/Debug/src",
+            "Tempest\\Discovery\\": "src/Tempest/Discovery/src",
             "Tempest\\EventBus\\": "src/Tempest/EventBus/src",
             "Tempest\\Filesystem\\": "src/Tempest/Filesystem/src",
             "Tempest\\Framework\\": "src/Tempest/Framework",
@@ -129,6 +136,7 @@
             "Tempest\\Container\\Tests\\": "src/Tempest/Container/tests",
             "Tempest\\Core\\Tests\\": "src/Tempest/Core/tests",
             "Tempest\\Database\\Tests\\": "src/Tempest/Database/tests",
+            "Tempest\\Discovery\\Tests\\": "src/Tempest/Discovery/tests",
             "Tempest\\EventBus\\Tests\\": "src/Tempest/EventBus/tests",
             "Tempest\\Filesystem\\Tests\\": "src/Tempest/Filesystem/tests",
             "Tempest\\Generation\\Tests\\": "src/Tempest/Generation/tests",

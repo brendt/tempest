@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Cache;
 
-use Tempest\Core\Discovery;
-use Tempest\Core\DiscoveryLocation;
-use Tempest\Core\IsDiscovery;
+use Tempest\Discovery\Discovery;
+use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 
 final class CacheDiscovery implements Discovery

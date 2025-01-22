@@ -6,7 +6,10 @@ namespace Tempest\Database;
 
 use Tempest\Database\Builder\ModelQueryBuilder;
 use Tempest\Database\Builder\TableName;
+use Tempest\Database\Casters\RelationCaster;
+use Tempest\Mapper\CastWith;
 
+#[CastWith(RelationCaster::class)]
 interface DatabaseModel
 {
     public static function table(): TableName;

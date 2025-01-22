@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
+use Tempest\Discovery\Discovery;
+use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 
 final class InstallerDiscovery implements Discovery

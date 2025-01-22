@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Auth\Install;
 
-use Tempest\Core\DoNotDiscover;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
+use Tempest\Discovery\DoNotDiscover;
 
 #[DoNotDiscover]
 final class CreatePermissionsTable implements DatabaseMigration

@@ -30,12 +30,6 @@ final readonly class ConfigCache implements Cache
 
     public function isEnabled(): bool
     {
-        $shouldCache = env('CACHE');
-
-        if ($shouldCache === null) {
-            return env('CONFIG_CACHE', false);
-        }
-
-        return $shouldCache;
+        return env('CACHE') ?? env('CONFIG_CACHE', false);
     }
 }

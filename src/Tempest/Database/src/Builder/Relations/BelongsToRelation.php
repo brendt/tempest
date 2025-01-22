@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Builder\Relations;
 
+use Tempest\Database\BelongsTo;
 use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\TableName;
 use Tempest\Reflection\ClassReflector;
@@ -11,21 +12,37 @@ use Tempest\Reflection\PropertyReflector;
 
 final readonly class BelongsToRelation implements Relation
 {
-    private ClassReflector $relationModelClass;
+    private function __construct(
+        private ClassReflector $relationModelClass,
+        private FieldName $localField,
+        private FieldName $joinField,
+    ) {
+    }
 
-    private FieldName $localField;
-
-    private FieldName $joinField;
-
-    public function __construct(PropertyReflector $property, string $alias)
+    public static function fromInference(PropertyReflector $property, string $alias): self
     {
-        $this->relationModelClass = $property->getType()->asClass();
+        $relationModelClass = $property->getType()->asClass();
 
         $localTable = TableName::for($property->getClass(), $alias);
-        $this->localField = new FieldName($localTable, $property->getName() . '_id');
+        $localField = new FieldName($localTable, $property->getName() . '_id');
 
         $joinTable = TableName::for($property->getType()->asClass(), "{$alias}.{$property->getName()}");
-        $this->joinField = new FieldName($joinTable, 'id');
+        $joinField = new FieldName($joinTable, 'id');
+
+        return new self($relationModelClass, $localField, $joinField);
+    }
+
+    public static function fromAttribute(BelongsTo $belongsTo, PropertyReflector $property, string $alias): self
+    {
+        $relationModelClass = $property->getType()->asClass();
+
+        $localTable = TableName::for($property->getClass(), $alias);
+        $localField = new FieldName($localTable, $belongsTo->localPropertyName);
+
+        $joinTable = TableName::for($property->getType()->asClass(), "{$alias}.{$property->getName()}");
+        $joinField = new FieldName($joinTable, $belongsTo->inversePropertyName);
+
+        return new self($relationModelClass, $localField, $joinField);
     }
 
     public function getStatement(): string

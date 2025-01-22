@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core;
+namespace Tempest\Discovery;
 
 final readonly class DiscoveryLocation
 {

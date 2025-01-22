@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core;
+namespace Tempest\Discovery;
 
-/** @phpstan-require-implements \Tempest\Core\Discovery */
+/** @phpstan-require-implements \Tempest\Discovery\Discovery */
 trait IsDiscovery
 {
     private DiscoveryItems $discoveryItems;

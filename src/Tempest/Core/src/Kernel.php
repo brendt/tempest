@@ -28,7 +28,7 @@ final class Kernel
 
     public function __construct(
         public string $root,
-        /** @var \Tempest\Core\DiscoveryLocation[] $discoveryLocations */
+        /** @var \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
         public array $discoveryLocations = [],
         ?Container $container = null,
     ) {

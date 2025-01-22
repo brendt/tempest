@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\Test;
-use Tempest\Core\DiscoveryLocation;
 use Tempest\Database\DatabaseConfig;
 use Tempest\Database\MigrationDiscovery;
+use Tempest\Discovery\DiscoveryLocation;
 use Tests\Tempest\Fixtures\Discovery\HiddenDatabaseMigration;
 use Tests\Tempest\Fixtures\Discovery\HiddenMigratableDatabaseMigration;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;

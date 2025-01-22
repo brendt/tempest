@@ -7,11 +7,11 @@ namespace Tempest\Vite;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 
-final class ViteConfigCommand
+final readonly class ViteConfigCommand
 {
     public function __construct(
-        private readonly Console $console,
-        private readonly ViteConfig $viteConfig,
+        private Console $console,
+        private ViteConfig $viteConfig,
     ) {
     }
 

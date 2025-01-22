@@ -25,7 +25,7 @@ final readonly class ConsoleApplication implements Application
     ) {
     }
 
-    /** @param \Tempest\Core\DiscoveryLocation[] $discoveryLocations */
+    /** @param \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
     public static function boot(
         string $name = 'Tempest',
         ?string $root = null,

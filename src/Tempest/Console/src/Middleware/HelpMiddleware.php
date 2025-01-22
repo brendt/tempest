@@ -38,7 +38,7 @@ final readonly class HelpMiddleware implements ConsoleMiddleware
         );
 
         $this->console->header('Usage');
-        (new RenderConsoleCommand($this->console, renderArguments: true, renderDescription: false))($consoleCommand);
+        new RenderConsoleCommand($this->console, renderArguments: true, renderDescription: false)($consoleCommand);
 
         if ($consoleCommand->help) {
             $this->console->writeln();

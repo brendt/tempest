@@ -7,6 +7,7 @@ namespace Tempest\Console;
 use BackedEnum;
 use Closure;
 use Stringable;
+use Symfony\Component\Process\Process;
 use Tempest\Highlight\Language;
 use Tempest\Support\ArrayHelper;
 
@@ -57,6 +58,8 @@ interface Console
      * @param Closure(string $search): array $search
      */
     public function search(string $label, Closure $search, bool $multiple = false, null|string|array $default = null): mixed;
+
+    public function task(string $label, null|Process|Closure $handler): bool;
 
     public function header(string $header, ?string $subheader = null): self;
 

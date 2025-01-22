@@ -34,7 +34,6 @@ final class Terminal
     public function __construct(
         private readonly Console $console,
     ) {
-        $this->switchToInteractiveMode();
         $this->updateActualSize();
 
         $this->initialCursor = $this->supportsTty()

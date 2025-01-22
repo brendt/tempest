@@ -7,6 +7,9 @@ namespace Tempest\Reflection\Tests;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\Tests\Fixtures\ChildWithRecursiveAttribute;
+use Tempest\Reflection\Tests\Fixtures\ClassWithInterfaceWithRecursiveAttribute;
+use Tempest\Reflection\Tests\Fixtures\RecursiveAttribute;
 use Tempest\Reflection\Tests\Fixtures\TestClassA;
 use Tempest\Reflection\Tests\Fixtures\TestClassB;
 
@@ -42,5 +45,19 @@ final class ClassReflectorTest extends TestCase
     {
         $reflector = new ClassReflector(TestClassB::class);
         $this->assertTrue($reflector->getProperty('name')->isNullable());
+    }
+
+    public function test_recursive_attribute_from_interface(): void
+    {
+        $reflector = new ClassReflector(ClassWithInterfaceWithRecursiveAttribute::class);
+        $this->assertNull($reflector->getAttribute(RecursiveAttribute::class));
+        $this->assertNotNull($reflector->getAttribute(RecursiveAttribute::class, recursive: true));
+    }
+
+    public function test_recursive_attribute_from_parent(): void
+    {
+        $reflector = new ClassReflector(ChildWithRecursiveAttribute::class);
+        $this->assertNull($reflector->getAttribute(RecursiveAttribute::class));
+        $this->assertNotNull($reflector->getAttribute(RecursiveAttribute::class, recursive: true));
     }
 }

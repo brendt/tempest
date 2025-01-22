@@ -14,12 +14,12 @@ use function Tempest\root_path;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
-final class ManifestTagsResolver implements TagsResolver
+final readonly class ManifestTagsResolver implements TagsResolver
 {
     public function __construct(
-        private readonly ViteConfig $viteConfig,
-        private readonly TagCompiler $tagCompiler,
-        private readonly Manifest $manifest,
+        private ViteConfig $viteConfig,
+        private TagCompiler $tagCompiler,
+        private Manifest $manifest,
     ) {
     }
 

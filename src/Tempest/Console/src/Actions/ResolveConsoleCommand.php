@@ -8,10 +8,10 @@ use Exception;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleConfig;
 
-final class ResolveConsoleCommand
+final readonly class ResolveConsoleCommand
 {
     public function __construct(
-        private readonly ConsoleConfig $consoleConfig,
+        private ConsoleConfig $consoleConfig,
     ) {
     }
 

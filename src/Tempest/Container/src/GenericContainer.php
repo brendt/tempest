@@ -83,8 +83,7 @@ final class GenericContainer implements Container
 
     public function unregister(string $className): self
     {
-        unset($this->definitions[$className]);
-        unset($this->singletons[$className]);
+        unset($this->definitions[$className], $this->singletons[$className]);
 
         return $this;
     }
@@ -141,12 +140,12 @@ final class GenericContainer implements Container
         }
 
         if (is_array($callable) && count($callable) === 2) {
-            return $this->invokeClosure(Closure::fromCallable($callable), ...$params);
+            return $this->invokeClosure($callable(...), ...$params);
         }
 
         if (method_exists($callable, '__invoke')) {
             return $this->invokeClosure(
-                Closure::fromCallable([$this->get($callable), '__invoke']),
+                $this->get($callable)->__invoke(...),
                 ...$params,
             );
         }

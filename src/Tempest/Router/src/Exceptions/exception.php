@@ -120,7 +120,7 @@ use Tempest\Router\Exceptions\HttpProductionErrorHandler;
 </head>
 <body>
 
-<h1><?= $this->throwable::class; ?>: <?= $this->throwable->getMessage() ?></h1>
+<h1><?= $this->throwable::class ?>: <?= $this->throwable->getMessage() ?></h1>
 
 <div>
     <div class="trace-item">

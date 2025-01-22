@@ -18,7 +18,7 @@ final readonly class NotIn implements Rule
 
     public function isValid(mixed $value): bool
     {
-        return (new In($this->values, true))->isValid($value);
+        return new In($this->values, true)->isValid($value);
     }
 
     public function message(): string

@@ -7,6 +7,7 @@ namespace Tempest\Console;
 use BackedEnum;
 use Closure;
 use Stringable;
+use Symfony\Component\Process\Process;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Components\Interactive\ConfirmComponent;
 use Tempest\Console\Components\Interactive\MultipleChoiceComponent;
@@ -14,6 +15,7 @@ use Tempest\Console\Components\Interactive\PasswordComponent;
 use Tempest\Console\Components\Interactive\ProgressBarComponent;
 use Tempest\Console\Components\Interactive\SearchComponent;
 use Tempest\Console\Components\Interactive\SingleChoiceComponent;
+use Tempest\Console\Components\Interactive\TaskComponent;
 use Tempest\Console\Components\Interactive\TextInputComponent;
 use Tempest\Console\Components\InteractiveComponentRenderer;
 use Tempest\Console\Exceptions\UnsupportedComponent;
@@ -183,7 +185,7 @@ final class GenericConsole implements Console
 
     public function component(InteractiveConsoleComponent $component, array $validation = []): mixed
     {
-        if ($this->componentRenderer !== null) {
+        if ($this->componentRenderer !== null && $this->componentRenderer->isComponentSupported($this, $component)) {
             return $this->componentRenderer->render($this, $component, $validation);
         }
 
@@ -272,6 +274,11 @@ final class GenericConsole implements Console
     public function progressBar(iterable $data, Closure $handler): array
     {
         return $this->component(new ProgressBarComponent($data, $handler));
+    }
+
+    public function task(string $label, null|Process|Closure $handler = null): bool
+    {
+        return $this->component(new TaskComponent($label, $handler));
     }
 
     public function search(string $label, Closure $search, bool $multiple = false, null|string|array $default = null): mixed

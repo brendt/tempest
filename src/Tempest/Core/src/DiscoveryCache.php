@@ -10,6 +10,8 @@ use Tempest\Cache\Cache;
 use Tempest\Cache\CacheConfig;
 use Tempest\Cache\DiscoveryCacheStrategy;
 use Tempest\Cache\IsCache;
+use Tempest\Discovery\Discovery;
+use Tempest\Discovery\DiscoveryItems;
 use function Tempest\path;
 
 final class DiscoveryCache implements Cache

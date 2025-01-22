@@ -16,7 +16,7 @@ final class CreateMigrationsTable implements DatabaseMigration
 
     public function up(): QueryStatement
     {
-        return (new CreateTableStatement(Model::table()->tableName))
+        return new CreateTableStatement(Model::table()->tableName)
             ->primary()
             ->text('name');
     }

@@ -6,7 +6,7 @@ namespace Tempest {
     use Tempest\Mapper\ObjectFactory;
 
     /**
-     * Creates a factory which allows instanciating `$objectOrClass` with the data specified by the {@see \Tempest\Mapper\ObjectFactory::from()} method.
+     * Creates a factory which allows instantiating `$objectOrClass` with the data specified by the {@see \Tempest\Mapper\ObjectFactory::from()} method.
      *
      * ### Example
      * ```php
@@ -28,7 +28,7 @@ namespace Tempest {
     }
 
     /**
-     * Creates a factory which allows instanciating the object or class specified by {@see \Tempest\Mapper\ObjectFactory::to()} the given `$data`.
+     * Creates a factory which allows instantiating the object or class specified by {@see \Tempest\Mapper\ObjectFactory::to()} the given `$data`.
      *
      * ### Example
      * ```php

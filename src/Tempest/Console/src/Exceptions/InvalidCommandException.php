@@ -23,7 +23,7 @@ final class InvalidCommandException extends ConsoleException
     {
         $console->error('Invalid command usage:');
 
-        (new RenderConsoleCommand($console))($this->consoleCommand);
+        new RenderConsoleCommand($console)($this->consoleCommand);
 
         $missingArguments = implode(', ', array_map(
             fn (ConsoleArgumentDefinition $argumentDefinition) => $argumentDefinition->name,

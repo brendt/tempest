@@ -37,6 +37,23 @@ final readonly class ClassReflector implements Reflector
         return $this->reflectionClass;
     }
 
+    public function getParent(): ?ClassReflector
+    {
+        if ($parentClass = $this->reflectionClass->getParentClass()) {
+            return new ClassReflector($parentClass);
+        }
+
+        return null;
+    }
+
+    /** @return Generator<\Tempest\Reflection\TypeReflector> */
+    public function getInterfaces(): Generator
+    {
+        foreach ($this->reflectionClass->getInterfaces() as $interface) {
+            yield new TypeReflector($interface);
+        }
+    }
+
     /** @return Generator<PropertyReflector> */
     public function getPublicProperties(): Generator
     {

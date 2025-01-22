@@ -220,6 +220,13 @@ final class CreateTableStatement implements QueryStatement
         return $this;
     }
 
+    public function raw(string $statement): self
+    {
+        $this->statements[] = new RawStatement($statement);
+
+        return $this;
+    }
+
     public function compile(DatabaseDialect $dialect): string
     {
         $createTable = sprintf(

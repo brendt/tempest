@@ -16,8 +16,8 @@ final class MyConsole
         string $path,
         TestStringEnum $type,
         TestStringEnum $fallback = TestStringEnum::A,
-        int    $times = 1,
-        bool   $force = false,
+        int $times = 1,
+        bool $force = false,
     ): void {
     }
 }

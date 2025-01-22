@@ -7,9 +7,9 @@ namespace Tempest\Console\Discovery;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Schedule;
 use Tempest\Console\Scheduler\SchedulerConfig;
-use Tempest\Core\Discovery;
-use Tempest\Core\DiscoveryLocation;
-use Tempest\Core\IsDiscovery;
+use Tempest\Discovery\Discovery;
+use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 
 final class ScheduleDiscovery implements Discovery

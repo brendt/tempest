@@ -24,7 +24,7 @@ final readonly class HttpApplication implements Application
     {
     }
 
-    /** @param \Tempest\Core\DiscoveryLocation[] $discoveryLocations */
+    /** @param \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
     public static function boot(
         string $root,
         array $discoveryLocations = [],
@@ -54,7 +54,7 @@ final readonly class HttpApplication implements Application
         try {
             $router = $this->container->get(Router::class);
 
-            $psrRequest = (new RequestFactory())->make();
+            $psrRequest = new RequestFactory()->make();
 
             $responseSender = $this->container->get(ResponseSender::class);
 

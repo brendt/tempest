@@ -6,9 +6,9 @@ namespace Tempest\Console\Discovery;
 
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleConfig;
-use Tempest\Core\Discovery;
-use Tempest\Core\DiscoveryLocation;
-use Tempest\Core\IsDiscovery;
+use Tempest\Discovery\Discovery;
+use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 
 final class ConsoleCommandDiscovery implements Discovery

@@ -99,11 +99,11 @@ final readonly class DiscoveryGenerateCommand
         $container = new GenericContainer();
         $container->singleton(Container::class, $container);
 
-        return (new Kernel(
+        return new Kernel(
             root: $this->kernel->root,
             discoveryLocations: $this->kernel->discoveryLocations,
             container: $container,
-        ))
+        )
             ->registerKernel()
             ->loadComposer()
             ->loadConfig();

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Core\Kernel;
 
 use Tempest\Core\Composer;
-use Tempest\Core\DiscoveryException;
-use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\Kernel;
+use Tempest\Discovery\DiscoveryException;
+use Tempest\Discovery\DiscoveryLocation;
 use function Tempest\path;
 
 /** @internal */

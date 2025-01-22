@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
-use Tempest\Core\DiscoveryItems;
-use Tempest\Core\DiscoveryLocation;
+use Tempest\Discovery\DiscoveryItems;
+use Tempest\Discovery\DiscoveryLocation;
 use Tempest\View\Components\Input;
 use Tempest\View\Exceptions\DuplicateViewComponent;
 use Tempest\View\ViewComponentDiscovery;

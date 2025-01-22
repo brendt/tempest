@@ -17,4 +17,5 @@ trait IsEnum
     use InvokableCases;
     use HelperMethods;
     use Comparable;
+    use Accessible;
 }

@@ -28,7 +28,7 @@ trait HelperMethods
      * Gets an array of case values
      * Pure enums will return their names, backed enums will return their values
      *
-     * @return array<int, string>
+     * @return array<int, int|string>
      */
     public static function values(): array
     {
@@ -51,7 +51,7 @@ trait HelperMethods
      * Returns an associative array of case names and values
      * For pure enums, this method is the equivalent of `values()`
      *
-     * @return array<int|string, string>
+     * @return array<int|string, int|string>
      */
     public static function options(): array
     {

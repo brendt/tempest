@@ -15,7 +15,7 @@ use Tempest\Validation\Validator;
 use Throwable;
 use function Tempest\Support\arr;
 
-final readonly class ArrayToObjectMapper implements Mapper
+final readonly class MixedToObjectMapper implements Mapper
 {
     public function __construct(
         private CasterFactory $casterFactory,
@@ -24,14 +24,10 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     public function canMap(mixed $from, mixed $to): bool
     {
-        if (! is_array($from)) {
-            return false;
-        }
-
         try {
             $class = new ClassReflector($to);
 
-            return $class->isInstantiable();
+            return $class->isInstantiable() || $class->hasMethod('cast');
         } catch (Throwable) {
             return false;
         }
@@ -47,9 +43,14 @@ final readonly class ArrayToObjectMapper implements Mapper
         /** @var PropertyReflector[] $unsetProperties */
         $unsetProperties = [];
 
-        $from = arr($from)->unwrap()->toArray();
-
         $isStrictClass = $class->hasAttribute(Strict::class);
+
+        if ($class->hasMethod('cast')) {
+            // @phpstan-ignore staticMethod.notFound
+            return $class->getName()::cast($from);
+        }
+
+        $from = arr($from)->unwrap()->toArray();
 
         foreach ($class->getPublicProperties() as $property) {
             if ($property->isVirtual()) {
@@ -134,6 +135,10 @@ final readonly class ArrayToObjectMapper implements Mapper
 
         if ($type->isBuiltIn()) {
             return new UnknownValue();
+        }
+
+        if ($type->asClass()->hasMethod('cast')) {
+            return $type->getName()::cast($data);
         }
 
         $caster = $this->casterFactory->forProperty($property);

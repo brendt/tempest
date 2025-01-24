@@ -127,6 +127,11 @@ final readonly class ClassReflector implements Reflector
         return new MethodReflector($this->reflectionClass->getMethod($name));
     }
 
+    public function hasMethod(string $name): bool
+    {
+        return $this->reflectionClass->hasMethod($name);
+    }
+
     public function isInstantiable(): bool
     {
         return $this->reflectionClass->isInstantiable();

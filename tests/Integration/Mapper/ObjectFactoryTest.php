@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\Mapper;
 
 use Tempest\Mapper\Exceptions\CannotMapDataException;
 use Tempest\Mapper\Mappers\ArrayToJsonMapper;
-use Tempest\Mapper\Mappers\ArrayToObjectMapper;
+use Tempest\Mapper\Mappers\MixedToObjectMapper;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tempest\Mapper\ObjectFactory;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -77,7 +77,7 @@ final class ObjectFactoryTest extends FrameworkIntegrationTestCase
     public function test_map_with(): void
     {
         $result = map(['a' => 'a', 'b' => 'b'])->with(
-            fn (ArrayToObjectMapper $mapper, mixed $from) => $mapper->map($from, ObjectA::class),
+            fn (MixedToObjectMapper $mapper, mixed $from) => $mapper->map($from, ObjectA::class),
             ObjectToArrayMapper::class,
             ArrayToJsonMapper::class,
         );

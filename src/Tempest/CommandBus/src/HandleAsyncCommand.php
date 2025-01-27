@@ -49,8 +49,6 @@ final readonly class HandleAsyncCommand
                 return ExitCode::ERROR;
             }
 
-            // TODO: task here
-
             $commandHandler->handler->invokeArgs(
                 $this->container->get($commandHandler->handler->getDeclaringClass()->getName()),
                 [$command],

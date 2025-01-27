@@ -25,8 +25,6 @@ final readonly class CleanupSessionsCommand
     #[Schedule(Every::MINUTE)]
     public function __invoke(): void
     {
-        // TODO: as task
-
         listen(SessionDestroyed::class, function (SessionDestroyed $event): void {
             $this->console->keyValue((string) $event->id, "<style='bold fg-green'>DESTROYED</style>");
         });

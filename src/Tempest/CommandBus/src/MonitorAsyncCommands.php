@@ -77,7 +77,6 @@ final readonly class MonitorAsyncCommands
             // Start a task
             $uuid = $availableCommands->keys()->first();
 
-            // TODO: remove logging in favor of "task" in HandleAsyncCommand
             $time = new DateTimeImmutable();
             $this->console->keyValue(
                 key: $uuid,

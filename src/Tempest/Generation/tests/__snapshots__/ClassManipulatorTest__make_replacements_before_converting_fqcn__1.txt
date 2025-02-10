@@ -1,0 +1,13 @@
+<?php
+
+namespace Tempest\Generation\Tests\Fixtures;
+
+use Tempest\Generation\Tests\Fixtures\Tempest\Generation\Tests\Fixtures\SampleNamespace\DummyFqcn;
+
+final class ClassWithDummyStringToBeReplacedByFqcn
+{
+    public function dummy(): string
+    {
+        return DummyFqcn::class;
+    }
+}

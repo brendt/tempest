@@ -184,14 +184,16 @@ trait ManipulatesPhpClasses
         $namespace = $file->addNamespace($this->namespace);
         $namespace->add($this->classType);
 
-        $this->simplifyClassNames($file);
-
+        $file = $this->simplifyClassNames($file);
         $code = $printer->printFile($file);
 
         foreach ($this->manipulations as $manipulation) {
             $code = (string) $manipulation(str($code));
         }
 
-        return $code;
+        $updatedFile = $file->fromCode($code);
+        $updatedFile = $this->simplifyClassNames($updatedFile);
+
+        return $printer->printFile($updatedFile);
     }
 }

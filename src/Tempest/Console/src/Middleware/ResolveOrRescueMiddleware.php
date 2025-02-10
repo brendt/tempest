@@ -47,7 +47,7 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
     {
         $this->console->writeln();
         $this->console->writeln('<style="bg-dark-red fg-white"> Error </style>');
-        $this->console->writeln("<style=\"fg-red\">Command <em>{$commandName}</em> not found.</style>");
+        $this->console->writeln("<style='fg-red'>Command <em>{$commandName}</em> not found.</style>");
 
         $similarCommands = $this->getSimilarCommands(str($commandName));
 

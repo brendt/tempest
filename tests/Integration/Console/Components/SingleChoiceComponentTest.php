@@ -69,4 +69,13 @@ final class SingleChoiceComponentTest extends FrameworkIntegrationTestCase
             $this->assertSame('Aidan', $component->enter());
         });
     }
+
+    public function test_default(): void
+    {
+        $this->console->withoutPrompting()->call(function (): void {
+            $component = new SingleChoiceComponent(label: 'Enter a name', options: ['Brent', 'Paul', 'Aidan', 'Roman'], default: 'Paul');
+
+            $this->assertSame('Paul', $component->altEnter());
+        });
+    }
 }

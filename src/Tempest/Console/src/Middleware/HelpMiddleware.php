@@ -46,6 +46,10 @@ final readonly class HelpMiddleware implements ConsoleMiddleware
         }
 
         foreach ($consoleCommand->getArgumentDefinitions() as $argumentDefinition) {
+            if ($argumentDefinition->aliases === [] && ! $argumentDefinition->description && ! $argumentDefinition->help) {
+                continue;
+            }
+
             $this->console
                 ->writeln()
                 ->write("<style=\"underline\">{$argumentDefinition->name}</style>")

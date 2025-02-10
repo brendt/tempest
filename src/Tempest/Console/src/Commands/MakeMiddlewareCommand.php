@@ -14,8 +14,6 @@ use Tempest\Console\Stubs\EventBusMiddlewareStub;
 use Tempest\Console\Stubs\HttpMiddlewareStub;
 use Tempest\Core\PublishesFiles;
 use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Generation\Exceptions\FileGenerationAbortedException;
-use Tempest\Generation\Exceptions\FileGenerationFailedException;
 
 final class MakeMiddlewareCommand
 {
@@ -27,32 +25,23 @@ final class MakeMiddlewareCommand
         aliases: ['middleware:make', 'middleware:create', 'create:middleware'],
     )]
     public function __invoke(
-        #[ConsoleArgument(
-            help: 'The name of the middleware class to create',
-        )]
+        #[ConsoleArgument(description: 'The name of the middleware class to create')]
         string $className,
-        #[ConsoleArgument(
-            name: 'type',
-            help: 'The type of the middleware to create',
-        )]
+        #[ConsoleArgument(name: 'type', description: 'The type of the middleware to create')]
         MiddlewareType $middlewareType,
     ): void {
-        try {
-            $stubFile = $this->getStubFileFromMiddlewareType($middlewareType);
-            $suggestedPath = $this->getSuggestedPath($className);
-            $targetPath = $this->promptTargetPath($suggestedPath);
-            $shouldOverride = $this->askForOverride($targetPath);
+        $stubFile = $this->getStubFileFromMiddlewareType($middlewareType);
+        $suggestedPath = $this->getSuggestedPath($className);
+        $targetPath = $this->promptTargetPath($suggestedPath);
+        $shouldOverride = $this->askForOverride($targetPath);
 
-            $this->stubFileGenerator->generateClassFile(
-                stubFile: $stubFile,
-                targetPath: $targetPath,
-                shouldOverride: $shouldOverride,
-            );
+        $this->stubFileGenerator->generateClassFile(
+            stubFile: $stubFile,
+            targetPath: $targetPath,
+            shouldOverride: $shouldOverride,
+        );
 
-            $this->success(sprintf('Middleware successfully created at "%s".', $targetPath));
-        } catch (FileGenerationAbortedException|FileGenerationFailedException|InvalidArgumentException $e) {
-            $this->error($e->getMessage());
-        }
+        $this->console->success(sprintf('Middleware successfully created at <file="%s"/>.', $targetPath));
     }
 
     private function getStubFileFromMiddlewareType(MiddlewareType $middlewareType): StubFile

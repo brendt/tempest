@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Concerns;
 
-use Tempest\Console\Components\ComponentState;
 use Tempest\Console\Components\Renderers\TextInputRenderer;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\InteractiveConsoleComponent;
@@ -27,7 +26,6 @@ trait HasTextInputRenderer
     public function enter(): ?string
     {
         if ($this->multiline) {
-            $this->state = ComponentState::ACTIVE;
             $this->buffer->input("\n");
 
             return null;
@@ -42,8 +40,6 @@ trait HasTextInputRenderer
         if (! $this->multiline) {
             return null;
         }
-
-        $this->state = ComponentState::SUBMITTED;
 
         return $this->buffer->text ?? '';
     }

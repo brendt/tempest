@@ -4,57 +4,78 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Static;
 
+use Tempest\Console\Components\Option;
+use Tempest\Console\Components\OptionCollection;
 use Tempest\Console\Console;
 use Tempest\Console\StaticConsoleComponent;
+use UnitEnum;
+use function Tempest\Support\str;
 
 final readonly class StaticSingleChoiceComponent implements StaticConsoleComponent
 {
-    private array $optionValues;
+    private OptionCollection $options;
 
     public function __construct(
         public string $label,
-        public array $options,
-        public mixed $default = null,
+        iterable $options,
+        public null|int|UnitEnum|string $default = null,
     ) {
-        $this->optionValues = array_values($options);
+        $this->options = new OptionCollection($options);
     }
 
-    public function render(Console $console): null|string|int
+    public function render(Console $console): null|int|UnitEnum|string
     {
         if (! $console->supportsPrompting()) {
             return $this->default;
         }
 
-        $console->write("<h2>{$this->label}</h2> ");
+        $console->write("<style='bold fg-blue'>{$this->label}</style> ");
 
-        $parsedOptions = [];
+        $prompt = $this->options->getOptions()
+            ->map(
+                fn (Option $option, int $index) => str($index)
+                        ->when(
+                            condition: $option->key === $this->default || $option->value === $this->default,
+                            callback: fn ($s) => $s->wrap('<style="fg-blue">', '</style>'),
+                        )
+                        ->wrap('[', ']')
+                        ->prepend('- ')
+                        ->append(' ', (string) $option->displayValue)
+                        ->toString(),
+            )
+            ->implode(PHP_EOL)
+            ->toString();
 
-        foreach ($this->optionValues as $key => $option) {
-            $key = $key === $this->default
-                ? "<em><strong>{$key}</strong></em>"
-                : $key;
-
-            $parsedOptions[$key] = "- [{$key}] {$option}";
-        }
-
-        $console->write(PHP_EOL . implode(PHP_EOL, $parsedOptions) . PHP_EOL);
+        $console->write(PHP_EOL . $prompt . PHP_EOL);
 
         $answer = trim($console->readln());
 
-        if (! $answer && $this->default) {
+        if ($answer === '' && $this->default) {
             return $this->default;
         }
 
-        if (array_key_exists($answer, $this->optionValues)) {
-            return array_is_list($this->options)
-                ? $this->optionValues[$answer]
-                : array_search($this->optionValues[$answer], $this->options, strict: false);
-        }
+        $selectedOption = $this->options->getOptions()->first(function (Option $option, int $index) use ($answer) {
+            if ($answer === $option->displayValue) {
+                return true;
+            }
 
-        if (in_array($answer, $this->optionValues, strict: false)) {
-            return array_is_list($this->options)
-                ? $answer
-                : array_search($answer, $this->options, strict: false);
+            if ($answer === $option->value) {
+                return true;
+            }
+
+            if ($this->options->getOptions()->isList() && $answer === (string) $index) {
+                return true;
+            }
+
+            if ($this->options->getOptions()->isList() && $answer === (string) $option->key) {
+                return true;
+            }
+
+            return false;
+        });
+
+        if ($selectedOption !== null) {
+            return $selectedOption->value;
         }
 
         return $this->render($console);

@@ -632,4 +632,18 @@ b'));
         $this->assertTrue(str('a')->isNotEmpty());
         $this->assertFalse(str('')->isNotEmpty());
     }
+
+    public function test_reverse(): void
+    {
+        $this->assertSame('oof', str('foo')->reverse()->toString());
+        $this->assertSame('…oof', str('foo…')->reverse()->toString());
+    }
+
+    public function test_truncate_start(): void
+    {
+        $this->assertSame('Lorem ipsum', str('Lorem ipsum')->truncateStart(20, start: '…')->toString());
+        $this->assertSame('…ipsum', str('Lorem ipsum')->truncateStart(5, start: '…')->toString());
+        $this->assertSame('…', str('Lorem ipsum')->truncateStart(0, start: '…')->toString());
+        $this->assertSame('…orem ipsum', str('Lorem ipsum')->truncateStart(-1, start: '…')->toString());
+    }
 }

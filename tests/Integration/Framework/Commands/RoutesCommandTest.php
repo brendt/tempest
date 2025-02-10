@@ -12,11 +12,18 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class RoutesCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_migrate_command(): void
+    public function test_displays_uri_and_controller(): void
     {
         $this->console
             ->call('routes')
             ->assertContains('/create-post')
             ->assertContains(PostController::class);
+    }
+
+    public function test_outputs_as_json(): void
+    {
+        $this->console
+            ->call('routes', ['--json'])
+            ->assertJson();
     }
 }

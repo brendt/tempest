@@ -24,7 +24,7 @@ enum ComponentState
     /**
      * Input was submitted.
      */
-    case SUBMITTED;
+    case DONE;
 
     /**
      * Input is blocked.

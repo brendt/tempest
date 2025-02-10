@@ -4,16 +4,41 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components;
 
+use ReflectionEnum;
+use UnitEnum;
+
 /**
  * @template T
  */
-final readonly class Option
+final class Option
 {
-    public function __construct(
-        public int|string $key,
-        /** @var T $value */
-        public mixed $value,
-    ) {
+    /** @var T */
+    public mixed $displayValue {
+        get {
+            if (! $this->value instanceof UnitEnum) {
+                return $this->value;
+            }
+
+            if (method_exists($this->value, 'toString')) {
+                return $this->value->toString();
+            }
+
+            $reflection = new ReflectionEnum($this->value::class);
+
+            if (! $reflection->isBacked()) {
+                return $this->value->name;
+            }
+
+            return match ($reflection->getBackingType()->getName()) {
+                'string' => $this->value->value,
+                default => $this->value->name,
+            };
+        }
+    }
+
+    /** @param T $value */
+    public function __construct(public int|string $key, public mixed $value)
+    {
     }
 
     public function equals(Option $other): bool

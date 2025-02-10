@@ -13,12 +13,15 @@ use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasState;
 use Tempest\Console\Components\Renderers\SpinnerRenderer;
 use Tempest\Console\Components\Renderers\TaskRenderer;
+use Tempest\Console\Components\Static\StaticTaskComponent;
+use Tempest\Console\HasStaticComponent;
 use Tempest\Console\InteractiveConsoleComponent;
+use Tempest\Console\StaticConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
 use Throwable;
 use function Tempest\Support\arr;
 
-final class TaskComponent implements InteractiveConsoleComponent
+final class TaskComponent implements InteractiveConsoleComponent, HasStaticComponent
 {
     use HasErrors;
     use HasState;
@@ -37,21 +40,27 @@ final class TaskComponent implements InteractiveConsoleComponent
 
     private(set) array $extensions = ['pcntl'];
 
+    public StaticConsoleComponent $staticComponent {
+        get => new StaticTaskComponent(
+            label: $this->label,
+            handler: $this->handler,
+        );
+    }
+
     public function __construct(
         readonly string $label,
         private null|Process|Closure $handler = null,
     ) {
-        $this->handler = $this->resolveHandler($handler);
-        $this->renderer = new TaskRenderer(new SpinnerRenderer(), $label);
         $this->startedAt = hrtime(as_number: true);
+        $this->renderer = new TaskRenderer(new SpinnerRenderer(), $label);
     }
 
-    public function render(Terminal $terminal): Generator
+    public function render(Terminal $terminal): bool|Generator
     {
         // If there is no task handler, we don't need to fork the process, as
         // it is a time-consuming operation. We can simply consider it done.
         if ($this->handler === null) {
-            $this->state = ComponentState::SUBMITTED;
+            $this->state = ComponentState::DONE;
 
             yield $this->renderTask($terminal);
 
@@ -65,7 +74,7 @@ final class TaskComponent implements InteractiveConsoleComponent
             throw new RuntimeException('Could not fork process');
         }
 
-        if (! $this->processId) {
+        if ($this->processId === 0) {
             $this->executeHandler();
         }
 
@@ -92,7 +101,7 @@ final class TaskComponent implements InteractiveConsoleComponent
                 $this->finishedAt = hrtime(as_number: true);
                 $this->state = match (pcntl_wifexited($status)) {
                     true => match (pcntl_wexitstatus($status)) {
-                        0 => ComponentState::SUBMITTED,
+                        0 => ComponentState::DONE,
                         default => ComponentState::ERROR,
                     },
                     default => ComponentState::CANCELLED,
@@ -100,7 +109,7 @@ final class TaskComponent implements InteractiveConsoleComponent
 
                 yield $this->renderTask($terminal);
 
-                return $this->state === ComponentState::SUBMITTED;
+                return $this->state === ComponentState::DONE;
             }
         } finally {
             if ($this->state->isFinished() && $this->processId) {
@@ -137,7 +146,7 @@ final class TaskComponent implements InteractiveConsoleComponent
         $this->sockets = [];
     }
 
-    private function executeHandler(): void
+    private function executeHandler(): never
     {
         $log = function (string ...$lines): void {
             arr($lines)
@@ -148,7 +157,7 @@ final class TaskComponent implements InteractiveConsoleComponent
         };
 
         try {
-            exit((int) (($this->handler ?? static fn (): bool => true)($log) === false));
+            exit((int) (($this->resolveHandler($this->handler) ?? static fn (): bool => true)($log) === false));
         } catch (Throwable) {
             exit(1);
         }
@@ -168,7 +177,7 @@ final class TaskComponent implements InteractiveConsoleComponent
                     }
 
                     if ($line = trim($buffer)) {
-                        $log($buffer);
+                        $log($line);
                     }
 
                     return true;

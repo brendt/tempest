@@ -27,21 +27,19 @@ final readonly class TailServerLogCommand
     {
         $serverLogPath = $this->logConfig->serverLogPath;
 
-        $this->console->write('<h1>Server</h1> ');
-
         if (! $serverLogPath) {
-            $this->console->error('No server log configured in LogConfig');
+            $this->console->error('No server log configured in <code>LogConfig</code>.');
 
             return;
         }
 
         if (! file_exists($serverLogPath)) {
-            $this->console->error("No valid server log at <em>{$serverLogPath}</em>");
+            $this->console->error("No valid server log at <file='{$serverLogPath}'/>");
 
             return;
         }
 
-        $this->console->writeln("Listening at {$serverLogPath}");
+        $this->console->header('Tailing server logs', "Reading <file='{$serverLogPath}'/>…");
 
         new TailReader()->tail(
             path: $serverLogPath,

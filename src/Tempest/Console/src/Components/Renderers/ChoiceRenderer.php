@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Renderers;
 
+use Stringable;
 use Tempest\Console\Components\ComponentState;
 use Tempest\Console\Components\OptionCollection;
 use Tempest\Console\Components\TextBuffer;
 use Tempest\Console\Point;
 use Tempest\Console\Terminal\Terminal;
+use UnitEnum;
 
 final class ChoiceRenderer
 {
@@ -17,7 +19,7 @@ final class ChoiceRenderer
     public function __construct(
         private bool $multiple = true,
         private int $maximumOptions = 10,
-        private ?string $default = null,
+        private null|Stringable|UnitEnum|string $default = null,
     ) {
     }
 
@@ -33,47 +35,55 @@ final class ChoiceRenderer
         $this->prepareRender($terminal, $state);
         $this->label($label);
 
-        if ($state === ComponentState::SUBMITTED) {
+        // If the component is done, we display a checkmark and the selected choice
+        if ($state === ComponentState::DONE) {
             $this->line(
+                '<style="fg-green">✓</style> ',
                 $this->multiple
-                    ? '<style="fg-gray italic">' . count($options->getSelectedOptions()) . ' selected</style>'
-                    : $options->getActive()?->value,
+                    ? '<style="dim">' . count($options->getSelectedOptions()) . ' selected</style>'
+                    : '<style="dim">' . $options->getActive()?->displayValue . '</style>',
             )->newLine();
-        } elseif ($state === ComponentState::CANCELLED) {
-            if ($query->text || $this->default) {
-                $this->line($this->style('fg-gray italic strikethrough', $query->text ?: $this->default))->newLine();
-            }
-        } else {
-            $this->line(
-                $this->style($filtering ? 'fg-magenta' : 'fg-gray', '/ '),
-                empty($query->text)
-                    ? $this->style('fg-gray dim', $placeholder ?? ($this->multiple && ! $filtering ? (count($options->getSelectedOptions()) . ' selected') : ''))
-                    : $this->style($filtering ? 'bold fg-cyan' : 'fg-gray', $this->truncateLeft($query->text, maxLineOffset: 2)),
+
+            return $this->finishRender();
+        }
+
+        // If the component is cancelled, display "cancelled"
+        if ($state === ComponentState::CANCELLED) {
+            $this->line($this->style('italic dim', 'Cancelled.'))->newLine();
+
+            return $this->finishRender();
+        }
+
+        // Otherwise, display the filter line
+        $this->line(
+            $this->style($filtering ? 'fg-magenta' : 'fg-gray', '/ '),
+            empty($query->text)
+                ? $this->style('fg-gray dim', $placeholder ?? ($this->multiple && ! $filtering ? (count($options->getSelectedOptions()) . ' selected') : ''))
+                : $this->style($filtering ? 'fg-cyan' : 'fg-gray', $this->truncateLeft($query->text, maxLineOffset: 2)),
+        )->newLine();
+
+        // And the choices.
+        if ($state === ComponentState::ACTIVE) {
+            $displayOptions = $options->getScrollableSection(
+                offset: $this->calculateScrollOffset($options, $this->maximumOptions, $options->getCurrentIndex()),
+                count: $this->maximumOptions,
             );
-            $this->newLine();
 
-            if ($state === ComponentState::ACTIVE) {
-                $displayOptions = $options->getScrollableSection(
-                    offset: $this->calculateScrollOffset($options, $this->maximumOptions, $options->getCurrentIndex()),
-                    count: $this->maximumOptions,
-                );
-
-                foreach ($displayOptions as $option) {
-                    if (! $this->multiple) {
-                        $this->line(
-                            $options->isActive($option) ? $this->style('fg-magenta', '→ ') : '  ',
-                            $this->style($options->isSelected($option) ? 'fg-green bold' : '', $option->value),
-                        );
-                    } else {
-                        $this->line(
-                            $options->isActive($option) ? $this->style('fg-magenta', '→ ') : '  ',
-                            $options->isSelected($option) ? $this->style('fg-green', '✔︎ ') : $this->style('fg-gray', '⋅ '),
-                            $this->style($options->isSelected($option) ? 'fg-green bold' : '', $option->value),
-                        );
-                    }
-
-                    $this->newLine();
+            foreach ($displayOptions as $option) {
+                if (! $this->multiple) {
+                    $this->line(
+                        $options->isActive($option) ? $this->style('fg-magenta', '→ ') : '  ',
+                        $this->style($options->isSelected($option) ? 'fg-green bold' : '', $option->displayValue),
+                    );
+                } else {
+                    $this->line(
+                        $options->isActive($option) ? $this->style('fg-magenta', '→ ') : '  ',
+                        $options->isSelected($option) ? $this->style('fg-green', '✓︎ ') : $this->style('fg-gray', '⋅ '),
+                        $this->style($options->isSelected($option) ? 'fg-green bold' : '', $option->displayValue),
+                    );
                 }
+
+                $this->newLine();
             }
         }
 

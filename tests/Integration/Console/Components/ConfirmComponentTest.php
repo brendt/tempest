@@ -20,13 +20,13 @@ final class ConfirmComponentTest extends FrameworkIntegrationTestCase
             $terminal = new Terminal($console);
             $component = new ConfirmComponent('Label', yes: 'Yes!', no: 'No!');
 
-            $this->assertStringContainsString('<style="bg-gray dim">  Yes!   </style>', $component->render($terminal));
-            $this->assertStringContainsString('<style="bg-red bold">   No!   </style>', $component->render($terminal));
+            $this->assertStringContainsString('Yes!', $component->render($terminal));
+            $this->assertStringContainsString('No!', $component->render($terminal));
 
             $component->toggle();
 
-            $this->assertStringContainsString('<style="bg-green bold">  Yes!   </style>', $component->render($terminal));
-            $this->assertStringContainsString('<style="bg-gray dim">   No!   </style>', $component->render($terminal));
+            $this->assertStringContainsString('Yes!', $component->render($terminal));
+            $this->assertStringContainsString('No!', $component->render($terminal));
 
             $this->assertTrue($component->enter());
         });

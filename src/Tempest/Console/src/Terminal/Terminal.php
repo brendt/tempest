@@ -29,14 +29,23 @@ final class Terminal
 
     private ?string $tty = null;
 
-    private bool $supportsTty = true;
+    private(set) bool $supportsTty = true {
+        get {
+            if (! $this->supportsTty) {
+                return false;
+            }
+
+            return self::supportsTty();
+        }
+    }
 
     public function __construct(
         private readonly Console $console,
     ) {
         $this->updateActualSize();
+        $this->switchToInteractiveMode();
 
-        $this->initialCursor = $this->supportsTty()
+        $this->initialCursor = $this->supportsTty
             ? new TerminalCursor($this->console, $this)
             : new GenericCursor();
 
@@ -45,7 +54,7 @@ final class Terminal
 
     public function switchToInteractiveMode(): self
     {
-        if (! $this->supportsTty()) {
+        if (! $this->supportsTty) {
             return $this;
         }
 
@@ -59,7 +68,7 @@ final class Terminal
 
     public function switchToNormalMode(): self
     {
-        if (! $this->supportsTty()) {
+        if (! $this->supportsTty) {
             return $this;
         }
 
@@ -97,9 +106,9 @@ final class Terminal
         foreach ($rendered as $content) {
             $footerLinesForContent = [];
 
-            if ($validationErrors) {
+            if (! $component->getState()->isFinished() && $validationErrors) {
                 $content .= PHP_EOL . arr($validationErrors)
-                    ->map(fn (string $error) => "   <style=\"fg-yellow\">{$error}</style>")
+                    ->map(fn (string $error) => "  <style=\"fg-yellow\">{$error}</style>")
                     ->implode(PHP_EOL)
                     ->append(PHP_EOL)
                     ->toString();
@@ -109,7 +118,7 @@ final class Terminal
                 $footerLinesForContent[] = $footer;
             }
 
-            if ($footerLinesForContent !== []) {
+            if (! $component->getState()->isFinished() && $footerLinesForContent !== []) {
                 $content .= PHP_EOL . implode(PHP_EOL, $footerLinesForContent) . PHP_EOL;
             }
 
@@ -138,12 +147,8 @@ final class Terminal
         return $this;
     }
 
-    public function supportsTty(): bool
+    public static function supportsTty(): bool
     {
-        if ($this->supportsTty === false) {
-            return false;
-        }
-
         if (! function_exists('shell_exec')) {
             return false;
         }
@@ -216,8 +221,8 @@ final class Terminal
 
     private function updateActualSize(): self
     {
-        $this->width = $this->supportsTty() ? (int) exec('tput cols') : 80;
-        $this->height = $this->supportsTty() ? (int) exec('tput lines') : 25;
+        $this->width = $this->supportsTty ? (int) exec('tput cols') : 80;
+        $this->height = $this->supportsTty ? (int) exec('tput lines') : 25;
 
         return $this;
     }

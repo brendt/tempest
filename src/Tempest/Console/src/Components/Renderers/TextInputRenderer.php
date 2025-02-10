@@ -18,7 +18,7 @@ final class TextInputRenderer
 
     public function __construct(
         private ?bool $multiline = false,
-        private int $maximumLines = 5,
+        private int $maximumLines = 4,
     ) {
     }
 
@@ -31,7 +31,6 @@ final class TextInputRenderer
         ?string $hint = null,
     ): string {
         $this->prepareRender($terminal, $state);
-
         $this->label($label);
 
         if ($hint) {
@@ -49,22 +48,39 @@ final class TextInputRenderer
         $this->scrollOffset = $this->calculateScrollOffset($lines, $this->maximumLines, $buffer->getRelativeCursorPosition($this->maxLineCharacters)->y);
 
         // slices lines to display only the visible portion
-        $displayLines = $lines->slice($this->scrollOffset, $this->maximumLines);
+        $displayLines = $lines->slice($this->scrollOffset, $this->state->isFinished() ? 1 : $this->maximumLines);
+
+        // if there is nothing to display after the component is done, show "no input"
+        if ($this->state->isFinished() && $lines->count() === 0) {
+            $this->line($this->style('italic dim', 'No input.'))->newLine();
+        }
 
         // renders visible lines
         foreach ($displayLines as $line) {
-            $this->line($this->style(
-                style: match (true) {
-                    $this->state === ComponentState::CANCELLED => 'italic fg-gray strikethrough',
-                    empty($buffer->text) => 'fg-gray',
-                    default => null,
+            $this->line(
+                // Add a symbol depending on the state
+                match ($this->state) {
+                    ComponentState::DONE => '<style="fg-green">✓</style> ',
+                    default => '',
                 },
-                content: $line,
-            ))->newLine();
+                // Prints the actual line
+                $this->style(
+                    style: match (true) {
+                        $this->state === ComponentState::DONE => 'dim',
+                        $this->state === ComponentState::CANCELLED => 'italic dim strikethrough',
+                        default => null,
+                    },
+                    content: $line,
+                ),
+                // Add an ellipsis if there is more than one line but we're done with the input
+                $this->state->isFinished() && $this->multiline && $lines->count() > 1
+                    ? '<style="dim">…</style>'
+                    : '',
+            )->newLine();
         }
 
         // fills remaining lines if less than max display lines
-        if ($state !== ComponentState::CANCELLED) {
+        if (! $this->state->isFinished()) {
             $lines = $this->multiline ? $this->maximumLines : 1;
 
             for ($i = $displayLines->count(); $i < $lines; $i++) {

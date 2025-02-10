@@ -44,7 +44,7 @@ final readonly class ConsoleErrorHandler implements ErrorHandler
 
         if ($this->argumentBag->get('-v') !== null) {
             foreach ($throwable->getTrace() as $i => $trace) {
-                $this->console->writeln("<h2>#{$i}</h2> " . $this->formatTrace($trace));
+                $this->console->writeln("<style='bold fg-blue'>#{$i}</style> " . $this->formatTrace($trace));
             }
 
             $this->console->writeln();
@@ -52,7 +52,7 @@ final readonly class ConsoleErrorHandler implements ErrorHandler
             $firstLine = $throwable->getTrace()[0];
 
             $this->console
-                ->writeln('<h2>#0</h2> ' . $this->formatTrace($firstLine))
+                ->writeln('<style="fg-blue bold">#0</style> ' . $this->formatTrace($firstLine))
                 ->writeln()
                 ->writeln('<em>-v</em> show more')
                 ->writeln();

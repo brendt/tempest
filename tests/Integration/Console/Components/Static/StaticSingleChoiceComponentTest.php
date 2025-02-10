@@ -61,7 +61,7 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
                 $console->writeln("picked {$answer}");
             })
             ->submit(1)
-            ->assertContains('picked b');
+            ->assertContains('picked B');
     }
 
     public function test_assoc_submit_value(): void
@@ -73,18 +73,18 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
                 $console->writeln("picked {$answer}");
             })
             ->submit('B')
-            ->assertContains('picked b');
+            ->assertContains('picked B');
     }
 
-    public function test_enum_submit_name(): void
+    public function test_enum_submit_value(): void
     {
         $this->console
             ->call(function (Console $console): void {
-                $answer = $console->ask('test', options: TestStringEnum::class);
+                $answer = $console->ask('test', options: TestStringEnum::cases());
 
-                $console->writeln("picked {$answer}");
+                $console->writeln("picked {$answer->value}");
             })
-            ->submit('B')
+            ->submit('b')
             ->assertContains('picked b');
     }
 
@@ -92,9 +92,9 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call(function (Console $console): void {
-                $answer = $console->ask('test', options: TestStringEnum::class);
+                $answer = $console->ask('test', options: TestStringEnum::cases());
 
-                $console->writeln("picked {$answer}");
+                $console->writeln("picked {$answer->value}");
             })
             ->submit(1)
             ->assertContains('picked b');
@@ -104,9 +104,9 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call(function (Console $console): void {
-                $answer = $console->ask('test', options: TestStringEnum::class, default: TestStringEnum::B);
+                $answer = $console->ask('test', options: TestStringEnum::cases(), default: TestStringEnum::B);
 
-                $console->writeln("picked {$answer}");
+                $console->writeln("picked {$answer->value}");
             })
             ->submit()
             ->assertContains('picked b');

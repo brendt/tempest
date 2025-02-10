@@ -10,6 +10,7 @@ use Stringable;
 use Symfony\Component\Process\Process;
 use Tempest\Highlight\Language;
 use Tempest\Support\ArrayHelper;
+use UnitEnum;
 
 interface Console
 {
@@ -46,7 +47,7 @@ interface Console
         ?string $placeholder = null,
         ?string $hint = null,
         array $validation = [],
-    ): null|int|string|Stringable|array;
+    ): null|int|string|Stringable|UnitEnum|array;
 
     public function confirm(string $question, bool $default = false, ?string $yes = null, ?string $no = null): bool;
 
@@ -63,13 +64,15 @@ interface Console
 
     public function header(string $header, ?string $subheader = null): self;
 
-    public function info(string $line, ?string $symbol = null): self;
+    public function info(string $contents, ?string $title = null): self;
 
-    public function error(string $line, ?string $symbol = null): self;
+    public function error(string $contents, ?string $title = null): self;
 
-    public function warning(string $line, ?string $symbol = null): self;
+    public function warning(string $contents, ?string $title = null): self;
 
-    public function success(string $line, ?string $symbol = null): self;
+    public function success(string $lcontentsine, ?string $title = null): self;
+
+    public function keyValue(string $key, ?string $value = null): self;
 
     /**
      * @param mixed|Closure(self): bool $condition

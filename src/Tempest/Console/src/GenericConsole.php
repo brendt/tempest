@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-use BackedEnum;
 use Closure;
+use InvalidArgumentException;
 use Stringable;
 use Symfony\Component\Process\Process;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
@@ -18,6 +18,8 @@ use Tempest\Console\Components\Interactive\SingleChoiceComponent;
 use Tempest\Console\Components\Interactive\TaskComponent;
 use Tempest\Console\Components\Interactive\TextInputComponent;
 use Tempest\Console\Components\InteractiveComponentRenderer;
+use Tempest\Console\Components\Renderers\KeyValueRenderer;
+use Tempest\Console\Components\Renderers\MessageRenderer;
 use Tempest\Console\Exceptions\UnsupportedComponent;
 use Tempest\Console\Highlight\TempestConsoleLanguage\TempestConsoleLanguage;
 use Tempest\Console\Input\ConsoleArgumentBag;
@@ -26,7 +28,7 @@ use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Language;
 use Tempest\Support\ArrayHelper;
 use Tempest\Support\Conditions\HasConditions;
-use function Tempest\Support\arr;
+use UnitEnum;
 
 final class GenericConsole implements Console
 {
@@ -104,7 +106,7 @@ final class GenericConsole implements Console
     public function header(string $header, ?string $subheader = null): static
     {
         $this->writeln();
-        $this->writeln("<h1>{$header}</h1>");
+        $this->writeln("<style='dim fg-blue'>//</style> <style='bold fg-blue'>".mb_strtoupper($header).'</style>');
 
         if ($subheader) {
             $this->writeln($subheader);
@@ -123,7 +125,7 @@ final class GenericConsole implements Console
     public function writeWithLanguage(string $contents, Language $language): self
     {
         if ($this->label) {
-            $contents = "<h2>{$this->label}</h2> {$contents}";
+            $contents = "<style='dim fg-blue'>//</style> <style='bold fg-blue'>" . $this->label . "\n{$contents}";
         }
 
         $this->output->write($this->highlighter->parse($contents, $language));
@@ -138,38 +140,30 @@ final class GenericConsole implements Console
         return $this;
     }
 
-    public function info(string $line, ?string $symbol = null): self
+    public function info(string $contents, ?string $title = null): self
     {
-        $symbol ??= 'ℹ';
-
-        $this->writeln("<style=\"bg-dark-blue fg-white\"> {$symbol} </style> <style=\"fg-blue\">{$line}</style>");
+        $this->writeln((new MessageRenderer('𝓲', 'blue'))->render($contents));
 
         return $this;
     }
 
-    public function error(string $line, ?string $symbol = null): self
+    public function error(string $contents, ?string $title = null): self
     {
-        $symbol ??= '×';
-
-        $this->writeln("<style=\"bg-dark-red fg-white\"> {$symbol} </style> <style=\"fg-red\">{$line}</style>");
+        $this->writeln((new MessageRenderer('×', 'red'))->render($contents, $title));
 
         return $this;
     }
 
-    public function warning(string $line, ?string $symbol = null): self
+    public function warning(string $contents, ?string $title = null): self
     {
-        $symbol ??= '⚠';
-
-        $this->writeln("<style=\"bg-dark-yellow fg-white\"> {$symbol} </style> <style=\"fg-yellow\">{$line}</style>");
+        $this->writeln((new MessageRenderer('⚠', 'yellow'))->render($contents, $title));
 
         return $this;
     }
 
-    public function success(string $line, ?string $symbol = null): self
+    public function success(string $contents, ?string $title = null): self
     {
-        $symbol ??= '✓';
-
-        $this->writeln("<style=\"bg-dark-green fg-white\"> {$symbol} </style> <style=\"fg-green\">{$line}</style>");
+        $this->writeln((new MessageRenderer('✓', 'green'))->render($contents, $title));
 
         return $this;
     }
@@ -183,9 +177,16 @@ final class GenericConsole implements Console
         return $clone;
     }
 
+    public function keyValue(string $key, ?string $value = null): self
+    {
+        $this->writeln((new KeyValueRenderer())->render($key, $value));
+
+        return $this;
+    }
+
     public function component(InteractiveConsoleComponent $component, array $validation = []): mixed
     {
-        if ($this->componentRenderer !== null && $this->componentRenderer->isComponentSupported($this, $component)) {
+        if ($this->componentRenderer !== null && $this->supportsPrompting() && $this->componentRenderer->isComponentSupported($this, $component)) {
             return $this->componentRenderer->render($this, $component, $validation);
         }
 
@@ -205,7 +206,7 @@ final class GenericConsole implements Console
         ?string $placeholder = null,
         ?string $hint = null,
         array $validation = [],
-    ): null|int|string|Stringable|array {
+    ): null|int|string|Stringable|UnitEnum|array {
         if ($this->isForced && $default) {
             return $default;
         }
@@ -214,29 +215,23 @@ final class GenericConsole implements Console
             $options = $options->toArray();
         }
 
-        if (is_a($options, BackedEnum::class, allow_string: true)) {
-            $options = arr($options::cases())->mapWithKeys(
-                fn (BackedEnum $enum) => yield $enum->value => $enum->name,
-            )->toArray();
+        if (! $multiple && is_array($default)) {
+            throw new InvalidArgumentException('The default value cannot be an array when `multiple` is `false`.');
         }
 
-        if ($default instanceof BackedEnum) {
-            $default = $default->value;
+        if ($options === null || $options === []) {
+            return $this->component(new TextInputComponent($question, $default, $placeholder, $hint, $multiline, $validation));
         }
 
-        $component = match (true) {
-            $options === null || $options === [] => new TextInputComponent($question, $default, $placeholder, $hint, $multiline),
-            $multiple => new MultipleChoiceComponent(
-                label: $question,
-                options: $options,
-                default: ArrayHelper::wrap($default),
-            ),
-            default => new SingleChoiceComponent(
-                label: $question,
-                options: $options,
-                default: $default,
-            ),
-        };
+        if ($multiple) {
+            return $this->component(new MultipleChoiceComponent($question, $options, ArrayHelper::wrap($default), $validation));
+        }
+
+        $component = new SingleChoiceComponent(
+            label: $question,
+            options: $options,
+            default: $default,
+        );
 
         return $this->component($component, $validation);
     }

@@ -123,6 +123,20 @@ final class OptionCollectionTest extends TestCase
         $this->assertSame(['bar', 'baz'], $this->toValues($options->getScrollableSection(1, 2)));
     }
 
+    public function test_enum_options(): void
+    {
+        $options = new OptionCollection(OptionCollectionEnum::cases());
+
+        $options->next();
+        $this->assertSame('OPT_2', $options->getActive()->displayValue);
+
+        $options->next();
+        $this->assertSame('OPT_3', $options->getActive()->displayValue);
+
+        $options->next();
+        $this->assertSame('OPT_1', $options->getActive()->displayValue);
+    }
+
     private function toValues(array $options): array
     {
         return array_map(fn (Option $option) => $option->value, array_values($options));

@@ -20,7 +20,7 @@ final readonly class StringHelper implements Stringable
 
     private string $string;
 
-    public function __construct(Stringable|string|null $string = '')
+    public function __construct(Stringable|int|string|null $string = '')
     {
         $this->string = (string) ($string ?? '');
     }
@@ -685,7 +685,39 @@ final readonly class StringHelper implements Stringable
             return $this;
         }
 
+        if ($characters < 0) {
+            $characters = mb_strlen($this->string) + $characters;
+        }
+
         return new self(rtrim(mb_strimwidth($this->string, 0, $characters, encoding: 'UTF-8')) . $end);
+    }
+
+    /**
+     * Truncates the instance to the specified amount of characters from the start.
+     *
+     * ### Example
+     * ```php
+     * str('Lorem ipsum')->truncateStart(5, start: '...'); // ...ipsum
+     * ```
+     */
+    public function truncateStart(int $characters, string $start = ''): self
+    {
+        return $this->reverse()
+            ->truncate($characters, $start)
+            ->reverse();
+    }
+
+    /**
+     * Reverses the instance.
+     *
+     * ### Example
+     * ```php
+     * str('Lorem ipsum')->reverse(); // muspi meroL
+     * ```
+     */
+    public function reverse(): self
+    {
+        return new self(implode('', array_reverse(mb_str_split($this->string, length: 1))));
     }
 
     /**

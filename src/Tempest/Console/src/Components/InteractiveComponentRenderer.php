@@ -85,16 +85,17 @@ final class InteractiveComponentRenderer
             usleep(50);
             $key = $console->read(16);
 
-            // If there's no keypress, continue
+            // If there's no keypress, continue.
             if ($key === '') {
                 Fiber::suspend();
 
                 continue;
             }
 
-            if ($component->getState() === ComponentState::BLOCKED) {
-                $this->shouldRerender = true;
+            // Otherwise, we will re-render after processing the key.
+            $this->shouldRerender = true;
 
+            if ($component->getState() === ComponentState::BLOCKED) {
                 continue;
             }
 
@@ -116,8 +117,6 @@ final class InteractiveComponentRenderer
 
                 continue;
             }
-
-            $this->shouldRerender = true;
 
             $return = null;
 
@@ -148,12 +147,15 @@ final class InteractiveComponentRenderer
 
             // If invalid, we'll remember the validation message and continue
             if ($failingRule !== null) {
+                $component->setState(ComponentState::ERROR);
                 $this->validationErrors[] = $failingRule->message();
                 Fiber::suspend();
 
                 continue;
             }
 
+            // The component is done, we can re-render and return.
+            $component->setState(ComponentState::DONE);
             Fiber::suspend();
 
             // If valid, we can return
@@ -240,7 +242,7 @@ final class InteractiveComponentRenderer
             return false;
         }
 
-        if (! new Terminal($console)->supportsTty()) {
+        if (! Terminal::supportsTty()) {
             return false;
         }
 
@@ -250,8 +252,6 @@ final class InteractiveComponentRenderer
     private function createTerminal(Console $console): Terminal
     {
         $terminal = new Terminal($console);
-        $terminal->switchToInteractiveMode();
-
         $terminal->cursor->clearAfter();
         stream_set_blocking(STDIN, false);
 

@@ -24,7 +24,7 @@ final readonly class HandleAsyncCommand
     ) {
     }
 
-    #[ConsoleCommand(name: 'command:handle')]
+    #[ConsoleCommand(name: 'command:handle', description: 'Manually executes a pending command')]
     public function __invoke(?string $uuid = null): ExitCode
     {
         try {
@@ -35,7 +35,7 @@ final readonly class HandleAsyncCommand
             }
 
             if (! $command) {
-                $this->error('No pending command found');
+                $this->error('No pending command found.');
 
                 return ExitCode::ERROR;
             }
@@ -44,7 +44,7 @@ final readonly class HandleAsyncCommand
 
             if (! $commandHandler) {
                 $commandClass = $command::class;
-                $this->error("No handler found for command {$commandClass}");
+                $this->error("No handler found for command {$commandClass}.");
 
                 return ExitCode::ERROR;
             }
@@ -55,7 +55,6 @@ final readonly class HandleAsyncCommand
             );
 
             $this->repository->markAsDone($uuid);
-            $this->success('Done');
 
             return ExitCode::SUCCESS;
         } catch (Throwable $throwable) {

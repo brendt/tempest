@@ -30,7 +30,7 @@ final class TaskRenderer
         $hint = match ($this->state) {
             ComponentState::ERROR => '<style="fg-red">An error occurred.</style>',
             ComponentState::CANCELLED => '<style="fg-yellow">Cancelled.</style>',
-            ComponentState::SUBMITTED => $finishedAt
+            ComponentState::DONE => $finishedAt
                 ? '<style="fg-gray">Done in <style="bold">'.$runtime($finishedAt).'ms</style>.</style>'
                 : '<style="fg-gray">Done.</style>',
             default => $hint ?? $runtime(hrtime(as_number: true)) . 'ms',
@@ -39,7 +39,7 @@ final class TaskRenderer
         $this->line(
             append: str()
                 ->append(match ($this->state) {
-                    ComponentState::SUBMITTED => '<style="fg-green">✔</style>',
+                    ComponentState::DONE => '<style="fg-green">✔</style>',
                     ComponentState::ERROR => '<style="fg-red">✖</style>',
                     ComponentState::CANCELLED => '<style="fg-yellow">⚠</style>',
                     default => '<style="fg-gray">'.$this->spinner->render($terminal, $this->state).'</style>',

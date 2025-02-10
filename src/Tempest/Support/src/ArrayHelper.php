@@ -327,12 +327,12 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Returns a new instance with only unique items from the original array.
      *
-     * @param string|null $key The key to use as the uniqueness criteria in nested arrays.
+     * @param string|null|Closure $key The key to use as the uniqueness criteria in nested arrays.
      * @param bool $shouldBeStrict Whether the comparison should be strict, only used when giving a key parameter.
      *
      * @return self<TKey, TValue>
      */
-    public function unique(?string $key = null, bool $shouldBeStrict = false): self
+    public function unique(null|Closure|string $key = null, bool $shouldBeStrict = false): self
     {
         if (is_null($key) && $shouldBeStrict === false) {
             return new self(array_unique($this->array, flags: SORT_REGULAR));
@@ -340,15 +340,19 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
 
         $uniqueItems = [];
         $uniqueFilteredValues = [];
+
         foreach ($this->array as $item) {
             // Ensure we don't check raw values with key filter
-            if (! is_null($key) && ! is_array($item)) {
+            if (! is_null($key) && ! is_array($item) && ! $key instanceof Closure) {
                 continue;
             }
 
-            $filterValue = is_array($item)
-                ? arr($item)->get($key)
-                : $item;
+            $filterValue = match ($key instanceof Closure) {
+                true => $key($item, $this->array),
+                false => is_array($item)
+                    ? arr($item)->get($key)
+                    : $item,
+            };
 
             if (is_null($filterValue)) {
                 continue;

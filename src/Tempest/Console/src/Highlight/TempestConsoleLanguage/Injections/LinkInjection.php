@@ -15,13 +15,14 @@ final readonly class LinkInjection implements Injection
     {
         return new ParsedInjection(preg_replace_callback(
             subject: $content,
-            pattern: '/(?<match>\<href=\"(?<href>.+)\"\>(?:(?!\<href).)*?\<\/href\>)/',
+            pattern: '/(?<match>\<href=(?<quote>[\"\'])(?<href>.+)\k<quote>\>(?:(?!\<href).)*?\<\/href\>)/',
             callback: function (array $matches) {
+                $quote = $matches['quote'];
                 $match = $matches['match'];
                 $href = $matches['href'];
 
                 return str($match)
-                    ->replaceFirst("<href=\"{$href}\">", "\x1b]8;;{$href}\x1b\\")
+                    ->replaceFirst("<href={$quote}{$href}{$quote}>", "\x1b]8;;{$href}\x1b\\")
                     ->replaceLast('</href>', "\x1b]8;;\x1b\\")
                     ->toString();
             },

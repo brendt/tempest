@@ -15,9 +15,9 @@ final class OverviewMiddlewareTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call('')
-            ->assertContains('Tempest')
-            ->assertContains('General')
-            ->assertContains('Hello')
+            ->assertContains('TEMPEST')
+            ->assertContains('GENERAL')
+            ->assertContains('HELLO')
             ->assertDoesNotContain('hidden')
             ->assertContains('hello:world')
             ->assertContains('hello:test   description')

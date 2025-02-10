@@ -36,7 +36,7 @@ final readonly class StaticCleanCommand
         $this->removeFiles($directoryIterator);
         $this->removeEmptyDirectories($directoryIterator);
 
-        $this->success('Done');
+        $this->success('Done.');
     }
 
     private function removeFiles(RecursiveDirectoryIterator $directoryIterator): void

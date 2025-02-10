@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Console\Components\Interactive;
 
 use Closure;
-use Tempest\Console\Components\ComponentState;
 use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasState;
 use Tempest\Console\Components\Concerns\HasTextBuffer;
@@ -159,8 +158,6 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
         if (($active = $this->options->getActive()) !== null) {
             return $active->value;
         }
-
-        $this->state = ComponentState::ACTIVE;
 
         return null;
     }

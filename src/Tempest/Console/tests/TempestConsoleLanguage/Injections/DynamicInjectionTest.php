@@ -17,6 +17,7 @@ use Tempest\Highlight\Highlighter;
 final class DynamicInjectionTest extends TestCase
 {
     #[Test]
+    #[TestWith(["<style='fg-cyan'>foo</style>", "\e[96mfoo\e[39m"])]
     #[TestWith(['<style="fg-cyan">foo</style>', "\e[96mfoo\e[39m"])]
     #[TestWith(['<style="bg-red">foo</style>', "\e[101mfoo\e[49m"])]
     #[TestWith(['<style="bold">foo</style>', "\e[1mfoo\e[22m"])]

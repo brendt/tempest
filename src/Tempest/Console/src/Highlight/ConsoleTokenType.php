@@ -9,10 +9,10 @@ use Tempest\Highlight\Tokens\TokenType;
 enum ConsoleTokenType implements TokenType
 {
     case EM;
-    case H1;
-    case H2;
     case STRONG;
     case UNDERLINE;
+    case MARK;
+    case CODE;
 
     public function getValue(): string
     {

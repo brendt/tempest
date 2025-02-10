@@ -18,7 +18,7 @@ trait RendersControls
 {
     public function renderFooter(Terminal $terminal): ?string
     {
-        if (in_array($this->getState(), [ComponentState::CANCELLED, ComponentState::SUBMITTED, ComponentState::BLOCKED])) {
+        if (in_array($this->getState(), [ComponentState::CANCELLED, ComponentState::DONE, ComponentState::BLOCKED])) {
             return null;
         }
 

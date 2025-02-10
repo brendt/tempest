@@ -18,7 +18,7 @@ final class InvalidCommandMiddlewareTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call(ComplexCommand::class)
-            ->assertContains('complex')
+            ->assertContains('COMPLEX')
             ->submit('a')
             ->submit('b')
             ->submit('c')
@@ -29,9 +29,9 @@ final class InvalidCommandMiddlewareTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call(StringEnumCommand::class)
-            ->assertContains('A')
-            ->assertContains('B')
-            ->assertContains('C')
+            ->assertContains('a')
+            ->assertContains('b')
+            ->assertContains('c')
             ->input(1)
             ->assertContains('b');
     }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Database\Connections;
 
 use SensitiveParameter;
-use Tempest\Database\DatabaseConnection;
 use Tempest\Database\DatabaseDialect;
 use Tempest\Database\Tables\NamingStrategy;
 use Tempest\Database\Tables\PluralizedSnakeCaseStrategy;

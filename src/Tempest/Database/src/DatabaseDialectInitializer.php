@@ -6,6 +6,7 @@ namespace Tempest\Database;
 
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
+use Tempest\Database\Connections\DatabaseConnection;
 
 final readonly class DatabaseDialectInitializer implements Initializer
 {

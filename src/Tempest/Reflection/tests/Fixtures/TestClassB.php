@@ -10,4 +10,9 @@ final class TestClassB
         public ?string $name,
     ) {
     }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
 }

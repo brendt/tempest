@@ -60,4 +60,12 @@ final class ClassReflectorTest extends TestCase
         $this->assertNull($reflector->getAttribute(RecursiveAttribute::class));
         $this->assertNotNull($reflector->getAttribute(RecursiveAttribute::class, recursive: true));
     }
+
+    public function test_has_method(): void
+    {
+        $reflector = new ClassReflector(TestClassB::class);
+        $reflection = new ReflectionClass(TestClassB::class);
+
+        $this->assertTrue($reflector->hasMethod('getName'));
+    }
 }

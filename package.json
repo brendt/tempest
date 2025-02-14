@@ -1,6 +1,8 @@
 {
   "private": true,
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "qa": "bun lint:fix && bun run test run && bun run build",
     "lint": "eslint packages",
@@ -10,13 +12,13 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "@innocenzi/eslint-config": "^0.22.4",
+    "@innocenzi/eslint-config": "^0.22.6",
     "@types/bun": "latest",
-    "bumpp": "^9.9.0",
-    "eslint": "^9.16.0",
-    "typescript": "^5.7.2",
-    "unbuild": "^2.0.0",
+    "bumpp": "^10.0.1",
+    "eslint": "^9.19.0",
+    "typescript": "^5.7.3",
+    "unbuild": "^3.3.1",
     "vite-plugin-tempest": "workspace:*",
-    "vitest": "^2.1.8"
+    "vitest": "^3.0.4"
   }
 }

@@ -11,7 +11,7 @@ import type { DevelopmentServerUrl, TempestViteConfiguration } from './types'
 import { loadTempestConfiguration } from './config'
 import { isIpv6 } from './utils'
 
-const TEMPEST_ORIGIN_PLACEHOLDER = '__tempest_placeholder__'
+const TEMPEST_ORIGIN_PLACEHOLDER = 'http://__tempest_placeholder__.test'
 
 let exitHandlersBound = false
 
@@ -55,6 +55,13 @@ export default function tempest(): Plugin {
 				},
 				server: {
 					origin: userConfig.server?.origin ?? TEMPEST_ORIGIN_PLACEHOLDER,
+					cors: userConfig.server?.cors ?? {
+						origin: userConfig.server?.origin ?? [
+							env.BASE_URI,
+							/^https?:\/\/(?:(?:[^:]+\.)?localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/,
+							/^https?:\/\/.*\.test(:\d+)?$/,
+						].filter(Boolean),
+					},
 					...(serverConfig
 						? {
 								host: userConfig.server?.host ?? serverConfig.host,
@@ -94,7 +101,7 @@ export default function tempest(): Plugin {
 		},
 		configureServer(server) {
 			const envDir = resolvedConfig.envDir || process.cwd()
-			const appUrl = loadEnv(resolvedConfig.mode, envDir, 'BASE_URI').BASE_URI ?? 'undefined'
+			const appUrl = loadEnv(resolvedConfig.mode, envDir, 'BASE_URI').BASE_URI
 
 			server.httpServer?.once('listening', () => {
 				const address = server.httpServer?.address()
@@ -113,7 +120,12 @@ export default function tempest(): Plugin {
 					setTimeout(() => {
 						server.config.logger.info(`\n  ${colors.magenta(`${colors.bold('TEMPEST')} ${tempestVersion()}`)}  ${colors.dim('plugin')} ${colors.bold(`v${pluginVersion()}`)}`)
 						server.config.logger.info('')
-						server.config.logger.info(`  ${colors.green('➜')}  ${colors.bold('URL')}: ${colors.cyan(appUrl.replace(/:(\d+)/, (_, port) => `:${colors.bold(port)}`))}`)
+
+						if (appUrl) {
+							server.config.logger.info(`  ${colors.green('➜')}  ${colors.bold('URL')}: ${colors.cyan(appUrl.replace(/:(\d+)/, (_, port) => `:${colors.bold(port)}`))}`)
+						} else {
+							server.config.logger.info(`  ${colors.magenta('➜')}  ${colors.yellow(`No ${colors.bold('BASE_URI')} specified in ${colors.bold('.env')}`)}.`)
+						}
 
 						if (typeof resolvedConfig.server.https === 'object' && typeof resolvedConfig.server.https.key === 'string') {
 							if (resolvedConfig.server.https.key.startsWith(herdMacConfigPath()) || resolvedConfig.server.https.key.startsWith(herdWindowsConfigPath())) {
@@ -310,7 +322,8 @@ function resolveDevelopmentEnvironmentServerConfig(): {
 		 ? 'Ensure you have secured the site via the Herd UI.'
 		 : `Ensure you have secured the site by running \`valet secure ${host}\`.`
 
-		 throw new TypeError(`Unable to find certificate files for your host [${host}] in the [${configPath}/Certificates] directory. ${tip}`)
+		 console.warn(`Unable to find certificate files for your host [${host}] in the [${configPath}/Certificates] directory. ${tip}`)
+		 return
 	}
 
 	return {

@@ -16,15 +16,14 @@ final readonly class IPv4 implements Rule
         private bool $allowPrivateRange = true,
         private bool $allowReservedRange = true,
     ) {
-        $options = 0;
-        $options = $options | FILTER_FLAG_IPV4;
+        $options = FILTER_FLAG_IPV4;
 
         if (! $this->allowPrivateRange) {
-            $options = $options | FILTER_FLAG_NO_PRIV_RANGE;
+            $options |= FILTER_FLAG_NO_PRIV_RANGE;
         }
 
         if (! $this->allowReservedRange) {
-            $options = $options | FILTER_FLAG_NO_RES_RANGE;
+            $options |= FILTER_FLAG_NO_RES_RANGE;
         }
 
         $this->options = $options;

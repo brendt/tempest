@@ -10,6 +10,8 @@ use function Tempest\Support\arr;
 
 /**
  * This trait provides some useful methods for enums
+ * 
+ * @template TEnum of \UnitEnum
  */
 trait HelperMethods
 {
@@ -32,7 +34,10 @@ trait HelperMethods
      */
     public static function values(): array
     {
-        return is_subclass_of(static::class, BackedEnum::class)
+        /** @var class-string<TEnum> */
+        $class = static::class;
+        
+        return is_subclass_of($class, BackedEnum::class)
             ? array_column(static::cases(), 'value')
             : array_column(static::cases(), 'name');
     }
@@ -55,7 +60,10 @@ trait HelperMethods
      */
     public static function options(): array
     {
-        return is_subclass_of(static::class, BackedEnum::class)
+        /** @var class-string<TEnum> */
+        $class = static::class;
+        
+        return is_subclass_of($class, BackedEnum::class)
             ? array_column(static::cases(), 'value', 'name')
             : self::values();
     }

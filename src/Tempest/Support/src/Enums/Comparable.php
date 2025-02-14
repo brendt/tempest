@@ -14,6 +14,8 @@ use UnitEnum;
 
 /**
  * This trait provides helpers to compare enums
+ * 
+ * @template TEnum of \UnitEnum
  */
 trait Comparable
 {
@@ -114,7 +116,10 @@ trait Comparable
      */
     public static function hasValue(string|int $value): bool
     {
-        $caseValues = is_subclass_of(static::class, BackedEnum::class)
+        /** @var class-string<TEnum> */
+        $class = static::class;
+        
+        $caseValues = is_subclass_of($class, BackedEnum::class)
             ? array_column(static::cases(), 'value')
             : array_column(static::cases(), 'name');
 
